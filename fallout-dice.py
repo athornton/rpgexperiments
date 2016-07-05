@@ -139,7 +139,7 @@ def plotstuff(rolls,trials,outputfile=None):
         fig=plt.figure(j)
         j=j+1
         plt.title("%s raw data (%d trials)" % (tp,trials))
-        plt.xlabel("Sum")
+        plt.xlabel("Damage")
         plt.ylabel("Count")
         bins=rt["numdice"] * rt["diesize"] + 1
         drange=(0,bins)
@@ -158,10 +158,12 @@ def plotstuff(rolls,trials,outputfile=None):
                                          key=lambda t: sum(t[1]["blocks"])))
         for at in rolldata:
             fig=plt.figure(j)
+            rat=rolldata[at]
             plt.title("%s for %s armor (%d trials)" % (tp,at,trials))
-            plt.xlabel("Sum")
+            plt.xlabel("Damage (mean=%f; std. dev.=%f)" % (rat["mean"],
+                                                         rat["stddev"]))
             plt.ylabel("Count")
-            sums=rolldata[at]["sum"]
+            sums=rat["sum"]
             fc=colors[i % lc]
             n, bins, patches = plt.hist(sums,bins,color=fc,range=drange)
             plt.grid(True)
