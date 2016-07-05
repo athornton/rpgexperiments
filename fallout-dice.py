@@ -5,6 +5,8 @@ import collections
 import statistics
 import argparse
 import json
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
 
 def rolltrials(trials,maxdice,biggest):
     rolls=dict()
@@ -18,6 +20,9 @@ def rolltrials(trials,maxdice,biggest):
             rd["diesize"]=diesize
             rd["numdice"]=numdice
             rd["raw"]=roll(trials,numdice,diesize)
+            rd["sum"]=[]
+            for rollset in rd["raw"]:
+                rd["sum"].append(sum(rollset))
     return rolls
 
 def roll(trials,numdice,diesize):
@@ -65,7 +70,7 @@ def statify(rd):
     rdrs=rd["cooked"]
     for rollset in rdrs:
         rd[sumname].append(sum(rollset))
-    rd["stddev"]=statistics.stdev(rd[sumname])
+    rd["stddev"]=statistics.pstdev(rd[sumname])
     rd["mean"]=statistics.mean(rd[sumname])
     return rd
 
@@ -114,9 +119,62 @@ def parse_my_args():
     parser.add_argument("-b","--biggest",type=int, default=20,
                         help="Biggest die (from standard D&D set of " +\
                         "[ 3, 4, 6, 8, 10, 12, 20, 100 ] to roll.")
+    parser.add_argument("-o","--output",help="Output file for plots")
     args = parser.parse_args()
     return args
 
+def plotstuff(rolls,trials,outputfile=None):
+    sortedrolls=collections.OrderedDict(sorted(rolls.items(), \
+                            key=lambda t: 1000 * (t[1])["diesize"] + \
+                                               (t[1]["numdice"])))    
+    colors="kbgrcmy"
+    lc=len(colors)
+    pp=None
+    if outputfile:
+        pp=PdfPages(outputfile)
+    j=1
+    for tp in sortedrolls:
+        i=0
+        rt=sortedrolls[tp]
+        fig=plt.figure(j)
+        j=j+1
+        plt.title("%s raw data (%d trials)" % (tp,trials))
+        plt.xlabel("Sum")
+        plt.ylabel("Count")
+        bins=rt["numdice"] * rt["diesize"] + 1
+        drange=(0,bins)
+        fc=colors[i]
+        i=i+1
+        rawsums=rt["sum"]
+        n, bins, patches = plt.hist(rawsums,bins,color=fc,range=drange)
+        plt.grid(True)
+        if outputfile:
+            pp.savefig()
+        else:
+            plt.show()
+        plt.close(fig)
+        urolldata=rt["cooked"]
+        rolldata=collections.OrderedDict(sorted(urolldata.items(), \
+                                         key=lambda t: sum(t[1]["blocks"])))
+        for at in rolldata:
+            fig=plt.figure(j)
+            plt.title("%s for %s armor (%d trials)" % (tp,at,trials))
+            plt.xlabel("Sum")
+            plt.ylabel("Count")
+            sums=rolldata[at]["sum"]
+            fc=colors[i % lc]
+            n, bins, patches = plt.hist(sums,bins,color=fc,range=drange)
+            plt.grid(True)
+            if outputfile:
+                pp.savefig()
+            else:
+                plt.show()
+            plt.close(fig)
+            i=i+1
+            j=j+1
+    if outputfile:
+        pp.close()
+        
 def main():
     args=parse_my_args()
     armor=dict()
@@ -132,6 +190,7 @@ def main():
     rawrolls=rolltrials(trials,args.maxdice,args.biggest)
     rolls=processrolls(rawrolls,armor)
     reporttrials(trials,rolls,armor)
+    plotstuff(rolls,trials,args.output)
 
 if __name__ == "__main__":
     main()
