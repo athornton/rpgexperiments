@@ -4,7 +4,6 @@ import sys
 import random
 import collections
 import statistics
-import argparse
 import json
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
@@ -34,6 +33,7 @@ class FalloutArmor:
         self.rolls=dict()
 
     def roll(self):
+        """Roll sets of dice n=trials times and store results"""
         if self.rolls: # Throw away old set
             self.rolls=dict()
         dicelist=self.dicelist
@@ -67,6 +67,7 @@ class FalloutArmor:
         return dice
 
     def applyarmor(self):
+        """Apply armor modifications from self.armor to rolls"""
         rolls=self.rolls
         armor=self.armor
         for dkey in rolls:
@@ -109,6 +110,7 @@ class FalloutArmor:
         rd["mean"]=statistics.mean(rd[sumname])
 
     def report(self):
+        """Output text report of rolls plus armor application"""
         f=sys.stdout
         if self.outputtextfile:
             f=open(self.outputtextfile,'w')
@@ -149,6 +151,7 @@ class FalloutArmor:
             self.armor=json.load(jf)
 
     def plot(self):
+        """Graph distribution of rolls with armor application"""
         rolls=self.rolls
         trials=self.trials
         outputfile=self.outputgraphicsfile
@@ -207,37 +210,3 @@ class FalloutArmor:
         if outputfile:
             pp.close()
             
-def _parse_my_args():
-    parser = argparse.ArgumentParser(description=
-                                     'Get damage reduction statistics.')
-    parser.add_argument("-t","--trials",type=int,default=10000,
-                        help="# of trials to run")
-    parser.add_argument("-j","--jsonfile",
-                        help="JSON file containing armor definitions")
-    parser.add_argument("-m","--maxdice",type=int, default=6,
-                        help="Maximum number of dice to roll.")
-    parser.add_argument("-b","--biggest",type=int, default=20,
-                        help="Biggest die (from standard D&D set of " +\
-                        "[ 3, 4, 6, 8, 10, 12, 20, 100 ] to roll.")
-    parser.add_argument("-g","--graphicaloutput",help="Output file for plots")
-    parser.add_argument("-o","--output",help="Output text file for report")
-    args = parser.parse_args()
-    return args
-
-        
-def main():
-    args=_parse_my_args()
-    armorobj=FalloutArmor(trials=args.trials,
-                          jsonfile=args.jsonfile,
-                          maxdice=args.maxdice,
-                          biggestdie=args.biggest,
-                          outputgraphicsfile=args.graphicaloutput,
-                          outputtextfile=args.output)
-    armorobj.roll()
-    armorobj.applyarmor()
-    armorobj.report()
-    armorobj.plot()
-
-if __name__ == "__main__":
-    main()
-    
