@@ -13,7 +13,7 @@ class FalloutArmor:
 
     def __init__(self,trials=10000,jsonfile=None,outputtextfile=None,
                  outputgraphicsfile=None,
-                 dicelist=[ 3,4,6,8,10,12,20,100 ],
+                 dicelist=None,
                  biggestdie=20,maxdice=3):
         self.trials=trials
         self.jsonfile=jsonfile
@@ -30,6 +30,12 @@ class FalloutArmor:
                           "Medium": [6],
                           "Heavy": [8],
                           "Power": [1,2,4,8,16,32,64,128] }
+        if dicelist:
+            dl=dicelist.split(',')
+            dli=[ int(x) for x in dl ]
+            self.dicelist= [ x for x in dli if x > 0 ]
+        else:
+            self.dicelist=[ 3,4,6,8,10,12,20,100 ]
         self.rolls=dict()
 
     def roll(self):
