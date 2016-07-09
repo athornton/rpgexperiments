@@ -37,7 +37,7 @@ def main():
     armorobj.roll()
     armorobj.applyarmor()
     armorobj.report()
-    if args.graphicaloutput != None and args.graphicaloutput != '':
+    if args.graphicaloutput == None or args.graphicaloutput != '':
         armorobj.plot()
 
 if __name__ == "__main__":

@@ -5,7 +5,6 @@ import random
 import collections
 import statistics
 import json
-import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 
 class FalloutArmor:
@@ -158,6 +157,10 @@ class FalloutArmor:
 
     def plot(self):
         """Graph distribution of rolls with armor application"""
+        try:
+            import matplotlib.pyplot as plt
+        except ImportError:
+            return
         rolls=self.rolls
         trials=self.trials
         outputfile=self.outputgraphicsfile
