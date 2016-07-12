@@ -156,12 +156,8 @@ class FalloutArmor:
 
     def plot(self):
         """Graph distribution of rolls with armor application"""
-        # Quietly do nothing if the plotting libraries are not installed.
-        try:
-            import matplotlib.pyplot as plt
-            from matplotlib.backends.backend_pdf import PdfPages
-        except ImportError:
-            return
+        import matplotlib.pyplot as plt
+        from matplotlib.backends.backend_pdf import PdfPages
         rolls=self.rolls
         trials=self.trials
         outputfile=self.outputgraphicsfile

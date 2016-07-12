@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse
+import sys
 import FalloutArmor
 
 def _parse_my_args():
@@ -38,7 +39,10 @@ def main():
     armorobj.applyarmor()
     armorobj.report()
     if args.graphicaloutput == None or args.graphicaloutput != '':
-        armorobj.plot()
+        try:
+            armorobj.plot()
+        except ImportError:
+            print("Matplotlib is required for plots.",file=sys.stderr)
 
 if __name__ == "__main__":
     main()
