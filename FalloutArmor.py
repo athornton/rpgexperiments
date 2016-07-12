@@ -5,7 +5,6 @@ import random
 import collections
 import statistics
 import json
-from matplotlib.backends.backend_pdf import PdfPages
 
 class FalloutArmor:
     """Armor mechanic for ignoring certain die results"""
@@ -157,8 +156,10 @@ class FalloutArmor:
 
     def plot(self):
         """Graph distribution of rolls with armor application"""
+        # Quietly do nothing if the plotting libraries are not installed.
         try:
             import matplotlib.pyplot as plt
+            from matplotlib.backends.backend_pdf import PdfPages
         except ImportError:
             return
         rolls=self.rolls
