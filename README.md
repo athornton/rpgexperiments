@@ -1,6 +1,10 @@
 # RPG Experiments
 
-## FalloutArmor
+## Fallout
+
+Fallout pen-and-paper RPG.
+
+### Fallout/FalloutArmor
 
 Working on a damage-reduction armor system for my homebrew Fallout
 system.  It's a class (FalloutArmor.py) and a little harness
