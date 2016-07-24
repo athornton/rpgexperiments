@@ -223,7 +223,7 @@ higher than the morale score, the enemy will attempt to flee.  Typical
 enemy morale scores are:
 
     Enemy              Morale
-    Radstag	       3
+    Radstag            3
     Mole Rat           5
     Raider             6
     Feral Ghoul        8
