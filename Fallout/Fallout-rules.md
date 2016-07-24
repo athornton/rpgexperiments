@@ -115,16 +115,22 @@ These ranges may vary by particular weapon, but in general:
 
 ##### Weapon Attack Modifiers
 
+Weapon ranges have the following modifiers applied:
+
   * point-blank `+20`
   * short `+5`
   * medium `0`
   * long `-20`
   * extreme `-40`
 
-Scopes: 1 round aiming gives you `+20` (you can't use a scope at
-point-blank range).  Rounds 2 and 3 each give you a further `+10`.
+###### Scopes
 
-Called shot: `-30%`, or `half your hit chance`, whichever is less, after
+`1` round aiming gives you `+20` (you can't use a scope at point-blank
+range).  Rounds `2` and `3` each give you a further `+10`.
+
+###### Called Shots
+
+`-30%`, or `half your hit chance`, whichever is less, after
 range and scope modifiers (so `25%` goes to `12%`, not `-5%`). Called
 shot effects are:
   
@@ -139,18 +145,46 @@ notoriously ineffectual, and, for instance, you want to try to shoot
 Deathclaws in the legs or in the belly rather than their skulls,
 usually.
 
+###### Pip-Boy Aiming
+
+Should you be so fortunate as to have a Pip-Boy, you may take a round to
+aim with it, and any range will be treated as the next lower one for
+purposes of aiming (so short range is treated as point-blank, medium as
+short, et cetera).  Melee and point-blank range are unaffected, except
+that you lose a turn to aiming.  Thrown weapons do not get a Pip-Boy
+aiming bonus.
+
 #### Splash damage
 
 Out to the first splash range increment, remove the highest die from the
 damage result, and apply remaining damage to anyone within the splash
 range.  Remove the next highest die and repeat for anyone within the
-next range increment.  Repeat until you're out of dice.
+next range increment.  Repeat until you're out of dice.  This applies to
+all damage types.
+
+#### Burn damage
+
+Burn damage functions somewhat like splash damage: on the second round,
+discard the highest die from the damage result, and take the remainder
+as damage on that round.  Repeat until out of dice.
+
+If you are on fire, you may take an action to douse the flames.  That
+removes another die from the damage result.
 
 #### Shotguns
 
 Double damage at point-blank range, half damage at medium range,
 one-quarter damage at long and extreme ranges.  This factor is applied
 after any armor modifiers.
+
+#### Misses (Splash and Collateral Damage)
+
+Roll `1d8` to determine the direction in which you missed, `1` being
+long, proceeding clockwise around to `5` being short, and so on.  The
+amount by which you missed determines how much you missed by, although
+there is no set formula for modifying distance by range.  The GM will
+decide whether you might have caught the target (or someone else) in the
+splash damage, or hit something that wasn't your intended target.
 
 ### Armor
 
@@ -170,7 +204,10 @@ If a die is blocked, any modifier to that die is discarded as well.
 Thus if a Super Mutant with a Nail Board (`1d6+1`) hit a player wearing
 Light Armor, and rolled a `4` on his damage die,  that `5`-point hit
 would do no damage, because both the `4` and the `+1` would be
-discarded. 
+discarded.
+
+For purposes of simplicity, impact, burn, and radiation damage are all
+treated identically for purposes of armor reduction.
 
 ### Morale
 
@@ -227,8 +264,15 @@ smaller dice worth of damage.
   
 #### Thrown
 
-* Grenade: `3d6`/splash (`2 yd`)
-* Nuka Grenade: `4d8`/splash (`3 yd`) + `1d6` rad
+* Grenade: `3d6`/splash (`2m`)
+* Nuka Grenade: `4d8` + `1d6` rad/splash (`3m`)
+* Molotov Cocktail: `6d4` burn/splash (`1m`)
+
+#### Mines
+
+* Frag Mine: `4d6`/splash (`1m`)
+* Bottlecap Mine: `5d8`/splash (`1m`)
+* Nuka Mine: `3d12` + `2d12` rad/splash (`2m`)
 
 #### Energy
 
@@ -239,9 +283,9 @@ smaller dice worth of damage.
   
 #### Heavy
 
-* Flamer: `4d4`
-* Missile: `4d6`/splash (`2 yd`) (`10m`/`30m`/`50m`/`200m`)
-* Fat Man: `6d20`/splash (`5 yd`) + `4d12` rad (`15m`/`50m`/`100m`/`500m`)
+* Flamer: `4d4` burn
+* Missile: `5d6`/splash (`2m`) (`10m`/`30m`/`50m`/`200m`)
+* Fat Man: `6d20` + `4d12` rad/splash(`5m`) (`15m`/`50m`/`100m`/`500m`)
 
 ## Healing
 
