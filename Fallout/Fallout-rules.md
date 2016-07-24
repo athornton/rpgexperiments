@@ -182,7 +182,10 @@ will be given as the product of two die rolls (e.g. `1d8 x 1d4`).  The
 first die roll is the damage; the second is the duration.  Each round of
 the duration, the poisoned creature must make an `END` save (modified by
 poison toxicity) or take the amount of damage indicated.  This damage is
-re-reolled each round until the duration has expired.
+re-rolled each round until the duration has expired.
+
+If you are hit by a poisoned attack, but your armor causes you to take
+no damage, you are not affected by the poison either.
 
 #### Shotguns
 
