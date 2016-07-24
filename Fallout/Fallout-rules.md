@@ -2,13 +2,13 @@
 
 ## S.P.E.C.I.A.L. Characteristics
 
- * Strength
- * Perception
- * Endurance
- * Charisma
- * Intelligence
- * Agility
- * Luck
+* Strength
+* Perception
+* Endurance
+* Charisma
+* Intelligence
+* Agility
+* Luck
 
 These range from a minimum of `1` to a maximum of `10`.
 
@@ -32,7 +32,7 @@ skill.  For instance, `Melee` depends on `Strength`.
 
 Base skill in a score is `5` times the controlling characteristic
 (or average of characteristics, for something like `Medic`, which is
-controlled by both `Intelligence` and `Charisma`), plus Luck
+controlled by both `Intelligence` and `Charisma`), plus `Luck`
 characteristic.
 
 ## Character Creation
@@ -56,6 +56,9 @@ Hit points are reduced when you take damage.  At `0` Hit Points you're dead.
 Radiation points ("Rads") reduce your maximum hit points.  If radiation
 damage would cause your current hit points to exceed your new maximum,
 your hit points drop to the new maximum.
+
+If you are hit with an attack that does both hit point and rad damage,
+apply the hit point damage first.
 
 ### Saving Throws
 
@@ -136,13 +139,16 @@ notoriously ineffectual, and, for instance, you want to try to shoot
 Deathclaws in the legs or in the belly rather than their skulls,
 usually.
 
-Splash damage: Out to the first splash range increment, remove the
-highest die from the damage result, and apply remaining damage to anyone
-within the splash range.  Remove the next highest die and repeat for
-anyone within the next range increment.  Repeat until you're out of
-dice.
+#### Splash damage
 
-Shotguns: double damage at point-blank range, half damage at medium range, 
+Out to the first splash range increment, remove the highest die from the
+damage result, and apply remaining damage to anyone within the splash
+range.  Remove the next highest die and repeat for anyone within the
+next range increment.  Repeat until you're out of dice.
+
+#### Shotguns
+
+Double damage at point-blank range, half damage at medium range,
 one-quarter damage at long and extreme ranges.  This factor is applied
 after any armor modifiers.
 
@@ -165,6 +171,30 @@ Thus if a Super Mutant with a Nail Board (`1d6+1`) hit a player wearing
 Light Armor, and rolled a `4` on his damage die,  that `5`-point hit
 would do no damage, because both the `4` and the `+1` would be
 discarded. 
+
+### Morale
+
+Most enemies encountered will have a morale score.  This is typically
+rolled when a creature first takes damage and again when it has taken
+half its hit points worth of damage.  For creatures in groups, if the
+leader is defeated or flees, the remaining creatures should make a
+morale check.  This may be modified based on circumstances; for
+instance, a Raider high on Psycho will not need to check morale.
+
+A morale check is `2d6` against the morale score.  If the roll is
+higher than the morale score, the enemy will attempt to flee.  Typical
+enemy morale scores are:
+
+    Enemy              Morale
+    Radstag	       3
+    Mole Rat           5
+    Raider             6
+    Feral Ghoul        8
+    Super Mutant       9
+    Deathclaw          12
+    Robot              12
+
+Leaders tend to have better morale than typical enemies of their type. 
 
 ### Weaponry
 
