@@ -156,7 +156,8 @@ aim with it, and any range will be treated as the next lower one for
 purposes of aiming (so short range is treated as point-blank, medium as
 short, et cetera).  Melee and point-blank range are unaffected, except
 that you lose a turn to aiming.  Thrown weapons do not get a Pip-Boy
-aiming bonus.
+aiming bonus.  You cannot use both a scope and a Pip-Boy to aim; it's
+one or the other.
 
 #### Splash damage
 
