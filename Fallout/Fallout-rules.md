@@ -81,7 +81,11 @@ Combat is effectively a series of skill checks against your Melee, Small
 Guns, Big Guns, or Explosives skill.
 
 Thrown weapons always use Explosives skill, even if the projectile
-thrown is not, in fact, explosive.
+thrown is not, in fact, explosive.  Laying a mine uses Explosives skill,
+modified by the weight of the creature stepping on it.  Flying creatures
+do not set off mines, and a radroach is much less likely to than is a
+Super Mutant.  Fortunately, this usually works out for the players,
+since deadlier opponents also tend to be bigger ones.
 
 #### Attacks
 
@@ -170,6 +174,15 @@ as damage on that round.  Repeat until out of dice.
 
 If you are on fire, you may take an action to douse the flames.  That
 removes another die from the damage result.
+
+#### Poison damage
+
+Some enemies, such as Radscorpions, make envenomed attacks.  The damage
+will be given as the product of two die rolls (e.g. `1d8 x 1d4`).  The
+first die roll is the damage; the second is the duration.  Each round of
+the duration, the poisoned creature must make an `END` save (modified by
+poison toxicity) or take the amount of damage indicated.  This damage is
+re-reolled each round until the duration has expired.
 
 #### Shotguns
 
