@@ -10,7 +10,7 @@
  * Agility
  * Luck
 
- These range from a minimum of `1` to a maximum of `10`.
+These range from a minimum of `1` to a maximum of `10`.
 
 ## Skills
 
@@ -26,60 +26,82 @@
 * Sneak ( `A` )
 * Observe ( `P` )
 
-The letter or letters after the skill indicate the S.P.E.C.I.A.L. characteristics that define the base skill level
-in that particular skill.  For instance, `Melee` depends on `Strength`.
+The letter or letters after the skill indicate the S.P.E.C.I.A.L.
+characteristics that define the base skill level in that particular
+skill.  For instance, `Melee` depends on `Strength`.
 
-Base skill in a score is `5` times the controlling characteristic (or average of characteristics, for something like `Medic`,
-which is controlled by both `Intelligence` and `Charisma`), plus Luck characteristic.
+Base skill in a score is `5` times the controlling characteristic
+(or average of characteristics, for something like `Medic`, which is
+controlled by both `Intelligence` and `Charisma`), plus Luck
+characteristic.
 
 ## Character Creation
 
-Start with `1` point in each S.P.E.C.I.A.L. characteristic.  Distribute `15` more points between them; `10` is the 
-maximum you can have in a characteristic.
+Start with `1` point in each S.P.E.C.I.A.L. characteristic.  Distribute
+`15` more points between them; `10` is the maximum you can have in a
+characteristic. 
 
-Calculate your base skill levels.  Then pick any three skills to `Tag!`.  Add `15` points to each of those 
-skills.  Then distribute `20` more points between your skills as you choose.  No skill may go above `100`.
+Calculate your base skill levels.  Then pick any three skills to `Tag!`.
+Add `15` points to each of those skills.  Then distribute `20` more
+points between your skills as you choose.  No skill may go above `100`.
 
 Initial hit points are `20 + ( 2 * END)`.
 
 ## Mechanics
 
-### Hit Points and Rad Points
+### Hit Points and Radiation Points
 
 Hit points are reduced when you take damage.  At `0` Hit Points you're dead.
 
-Radiation points reduce your maximum hit points.  If radiation damage would cause your
-current hit points to exceed your new maximum, your hit points drop to the new maximum.
+Radiation points ("Rads") reduce your maximum hit points.  If radiation
+damage would cause your current hit points to exceed your new maximum,
+your hit points drop to the new maximum.
 
 ### Saving Throws
 
-A Saving Throw is a `1d10` roll.  You want to roll under or equal to the S.P.E.C.I.A.L. 
-characteristic you are saving against.  The roll may be modified by the save's difficulty.
+A Saving Throw is a `1d10` roll.  You want to roll under or equal to the
+S.P.E.C.I.A.L. characteristic you are saving against.  The roll may be
+modified by the save's difficulty. 
 
 ### Skill Checks
 
-A skill check is a `1d100` roll; you want to roll under or equal to your skill.  This may be modified by
-task difficulty.  An `01` is a critical success; a `00` is a critical failure.  The degree by which you
-make or fail the roll is likely to inform how well or poorly you did--a roll right under your skill is 
-a just-barely success, while a roll far above it is an ignominious (though not catastrophic) failure.
+A skill check is a `1d100` roll; you want to roll under or equal to your
+skill.  This may be modified by task difficulty.  An `01` is a critical
+success; a `00` is a critical failure.  The degree by which you make or
+fail the roll is likely to inform how well or poorly you did: a roll
+right under your skill is  a just-barely success, while a roll far above
+it is an ignominious (though not catastrophic) failure.
 
 ### Combat
 
+Combat is effectively a series of skill checks against your Melee, Small
+Guns, Big Guns, or Explosives skill.
+
+Thrown weapons always use Explosives skill, even if the projectile
+thrown is not, in fact, explosive.
+
 #### Attacks
 
-Start with percentile skill.  Factor in the target's agility: `+ 10 - ( 2 x target's AGI)`
+Start with the appropriate percentile skill.
+
+Factor in the target's agility: `+ 10 - ( 2 x target's AGI)`
+
+(So there's no modifier for an `AGI 5` target, a `+8` modifier for an
+`AGI 1` target (and `+10` for an immobile target), and a `-10` modifier
+against an `AGI 10` target.)
 
 ##### Melee
 
 Melee attacks get the point-blank range modifier of `+20`.
 
-Melee attacks also all have a damage modifier based on strength: `(STR - 5) / 2` (round down)
+Melee attacks also all have a damage modifier based on strength:
+`(STR - 5) / 2` (round down)
 
 ##### Weapon Ranges
 
 Point-blank range is anything under 2 meters.
 
-These ranges may vary by particular weapon.
+These ranges may vary by particular weapon, but in general:
 
     Weapon Type: Short Range  Medium Range  Long Range  Maximum Range
     Pistols:     10 meters    25 meters     50 meters   100 meters
@@ -96,36 +118,60 @@ These ranges may vary by particular weapon.
   * long `-20`
   * extreme `-40`
 
-  Scopes: 1 round aiming gives you `+20` (you can't use a scope at point-blank range).  Rounds 2
-      and 3 each give you a further `+10`.
+Scopes: 1 round aiming gives you `+20` (you can't use a scope at
+point-blank range).  Rounds 2 and 3 each give you a further `+10`.
 
-  Called shot: `-30%`, or `half your score`, whichever is less (so `25%` goes to `12%`, not `-5%`)
+Called shot: `-30%`, or `half your hit chance`, whichever is less, after
+range and scope modifiers (so `25%` goes to `12%`, not `-5%`). Called
+shot effects are:
   
-  * Headshot: target loses next action; save versus `END` or ignore all armor reduction
-  * Weapon arm: save versus `END` or lose weapon.
-  * Other arm: No mechanical effect; but on something with 2 claw attacks...
-  * Leg: speed reduced by `1/4` (save vs. `END` or `1/2`)
-  * Other Leg: further `1/4` / `1/2`
+* Headshot: target loses next action; save versus `END` or ignore armor. 
+* Weapon arm: save versus `END` or lose weapon.
+* Other arm: No mechanical effect; but on something with 2 claw attacks...
+* Leg: speed reduced by `1/4` (save vs. `END` or `1/2`)
+* Other Leg: further `1/4` / `1/2`
 
-  Splash damage: Out to the first splash range increment, remove the highest die from
-  the damage result, and apply that damage to anyone within the splash range.  Remove the next highest
-  die and repeat for anyone within that increment.  Repeat until you're out of dice.
+Note that these too may vary by target: headshots against robots are
+notoriously ineffectual, and, for instance, you want to try to shoot
+Deathclaws in the legs or in the belly rather than their skulls,
+usually.
 
-  Shotguns: double damage at point-blank range, half damage at medium range, 
-  one-quarter damage at long and extreme ranges.  This factor is applied after any armor modifiers.
+Splash damage: Out to the first splash range increment, remove the
+highest die from the damage result, and apply remaining damage to anyone
+within the splash range.  Remove the next highest die and repeat for
+anyone within the next range increment.  Repeat until you're out of
+dice.
+
+Shotguns: double damage at point-blank range, half damage at medium range, 
+one-quarter damage at long and extreme ranges.  This factor is applied
+after any armor modifiers.
 
 ### Armor
 
-   * Light Armor: ignore all damage dice which are `4`s (or highest on die if die size is less than `4`)
-   * Medium Armor: ignore all damage dice which are `6`s (or highest)
-   * Heavy: ignore all `8`s (or highest)
-   * Power: ignore all `powers of 2`, and highest.
+Armor functions by removing certain damage dice from the pool.  If the
+number to be ignored is larger than the largest number the die can roll,
+the highest roll on that die is removed instead.  For instance, any
+armor type will ignore a `3` rolled as the result of an unarmed attack.
+Note that this means that you simply cannot cause damage to someone
+wearing power armor with an unarmed punch.
 
-If a die is blocked, any modifier to that die is discarded as well.  Thus if a Super Mutant 
-with a Nail Board (`1d6+1`) hit a player wearing Light Armor, and rolled a `4` on his damage die, 
-that `5`-point hit would do no damage, because both the `4` and the `+1` would be discarded.
+* Light Armor: ignore all damage dice which are `4`s (or highest)
+* Medium Armor: ignore all damage dice which are `6`s (or highest)
+* Heavy: ignore all `8`s (or highest)
+* Power: ignore all `powers of 2`, and highest.
+
+If a die is blocked, any modifier to that die is discarded as well.
+Thus if a Super Mutant with a Nail Board (`1d6+1`) hit a player wearing
+Light Armor, and rolled a `4` on his damage die,  that `5`-point hit
+would do no damage, because both the `4` and the `+1` would be
+discarded. 
 
 ### Weaponry
+
+This section shows the weapon damage done on a successful hit with the
+indicated weapon.  For weapons not shown, interpolate based on what it's
+most like.  In general, multi-projectile weapons should do multiple
+smaller dice worth of damage.
 
 #### Melee
 
@@ -144,7 +190,7 @@ that `5`-point hit would do no damage, because both the `4` and the `+1` would b
 * .38/9mm: `1d6`
 * 10mm/.45: `1d8`
 * 20 ga.: `2d4`
-* 5.56: `1d10`
+* 5.56/.44: `1d10`
 * 12 ga.: `3d4`
 * .308: `2d6`
 * .50: `2d10`
@@ -169,14 +215,15 @@ that `5`-point hit would do no damage, because both the `4` and the `+1` would b
 
 ## Healing
 
- * Radiation damage decreases maximum HP until healed (with RadAway, a rad scrubber, or certain food items).
- * Stimpaks heal `25 + Medic skill` HP
- * Radaway heals `25 + Medic skill` Rad points
- * Sleeping in a bed heals all HP up to current maximum HP.  No rad healing.
+* Radiation damage decreases maximum HP until healed
+ (with RadAway, a rad scrubber, or certain food items).
+* Stimpaks heal `25 + Medic skill` HP
+* Radaway heals `25 + Medic skill` Rad points
+* Sleeping in a bed heals all HP up to current maximum HP.  No rad healing.
 
 ## Experience
 
-   At level `N`, you need `100 * N` more experience to get to the next one:
+At level `N`, you need `100 * N` more experience to get to the next one:
 
     Level     XP
     1         0
@@ -189,8 +236,9 @@ that `5`-point hit would do no damage, because both the `4` and the `+1` would b
        ...
 
 When you level up, you can either: 
- * add `1` point to a S.P.E.C.I.A.L. characteristic (up to a maximum of `10`), or 
- * you can add `10 + Intelligence + Luck` points to skills (up to a maximum of `100` points in a skill).  
+* add `1` point to a S.P.E.C.I.A.L. characteristic (up to a maximum of `10`)
+* add `10 + INT + LCK` points to skills (up to a maximum of `100`)
  
-At each level, you get `5 + Endurance` additional hit points.  Endurance gains do not
-retroactively boost hit points, but only increase hit points for that level and subsequent levels.
+At each level, you get `5 + Endurance` additional hit points.  Endurance
+gains do not retroactively boost hit points, but only increase hit
+points for that level and all subsequent levels.
