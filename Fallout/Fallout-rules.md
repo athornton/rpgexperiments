@@ -26,6 +26,8 @@ These range from a minimum of `1` to a maximum of `10`.
 * Sneak ( `A` )
 * Observe ( `P` )
 
+Skills range from a minumum of `0` to a maximum of `100`.
+
 The letter or letters after the skill indicate the S.P.E.C.I.A.L.
 characteristics that define the base skill level in that particular
 skill.  For instance, `Melee` depends on `Strength`.
