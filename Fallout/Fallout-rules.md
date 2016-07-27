@@ -219,6 +219,9 @@ wearing power armor with an unarmed punch.
 * Heavy: ignore all `8`s (or highest)
 * Power: ignore all `powers of 2`, and highest.
 
+A little bit of Python to allow experimentation with armor is
+[here](https://github.com/athornton/rpgexperiments/tree/master/Fallout/FalloutArmor).
+
 If a die is blocked, any modifier to that die is discarded as well.
 Thus if a Super Mutant with a Nail Board (`1d6+1`) hit a player wearing
 Light Armor, and rolled a `4` on his damage die,  that `5`-point hit

@@ -1,10 +1,10 @@
 # RPG Experiments
 
-## Fallout
+## [Fallout](https://github.com/athornton/rpgexperiments/tree/master/Fallout)
 
 Fallout pen-and-paper RPG.
 
-### Fallout/FalloutArmor
+### Fallout/[FalloutArmor](https://github.com/athornton/rpgexperiments/tree/master/Fallout/FalloutArmor)
 
 Working on a damage-reduction armor system for my homebrew Fallout
 system.  It's a class (FalloutArmor.py) and a little harness
