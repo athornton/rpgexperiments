@@ -167,12 +167,12 @@ There are three ranges of ammunition capacity: `plenty`, `some`, and
 `3-2-1`.  What these mean are:
 
 * At `plenty` and `some`, you roll each time you fire a shot.  `Plenty`
-  rolls a d20 for small, single-shot arms, and d12 for automatic or
+  rolls a `d20` for small, single-shot arms, and `d12` for automatic or
   heavy weaponry.  If you roll a `1` your ammo capacity decreases to
   `some`.
 
-* At `some` you roll a d6 (d4 for automatic or heavy weaponry).  If you
-  roll a `1`, your ammo capacity decreases to `3-2-1`.
+* At `some` you roll a `d6` (`d4` for automatic or heavy weaponry).  If
+  you roll a `1`, your ammo capacity decreases to `3-2-1`.
 
 * `3-2-1` is how many shots (or bursts, for auto) you have left.
 
@@ -183,13 +183,13 @@ Ammo basically comes in units of "one or two loose rounds", "a clip",
 and "a box".  These represent `3-2-1`, `some`, and `plenty`.
 
 * If your current amount of ammo is less than what you find, you now
-  have what you found. 
+  have what you found.
+  
+* If you are in `3-2-1` and you find one or two loose rounds, if your
+  total ammo count is now 4 or greater, you now have `some`.
 
-* If you are in `3-2-1` and you find loose rounds, if your total ammo
-  count is 4 or greated, you have `some`.
-
-* If you have `some` and you find a clip, roll d6.  On a `6`, you now
-  have `plenty`; otherwise, you still have `some`.
+* If you have `some` and you find a clip (i.e. `some`), roll d6.  On a
+  `6`, you now have `plenty`; otherwise, you still have `some`.
 
 #### Splash damage
 
