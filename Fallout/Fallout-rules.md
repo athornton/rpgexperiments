@@ -177,7 +177,7 @@ There are three ranges of ammunition capacity: `plenty`, `some`, and
 * `3-2-1` is how many shots (or bursts, for auto) you have left.
 
 This works out to, on average, 20 shots from small arms from "plenty",
-and
+and 13 for heavy or automatic weapons, before you run out.
 
 Ammo basically comes in units of "one or two loose rounds", "a clip",
 and "a box".  These represent `3-2-1`, `some`, and `plenty`.
