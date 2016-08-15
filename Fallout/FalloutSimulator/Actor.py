@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 
-from .FalloutObject import FalloutObject
+from .WorldObject import WorldObject
 from .Special import Special
 from .Armor import Armor
 from .Strategy import Strategy
-from .Arena import Arena
 from .Coordinates import Coordinates
 from .Skills import Skills
 from .Dice import Die
@@ -16,7 +15,7 @@ from .Weapon import Weapon
 from .ActorException import ActorException
 import math
 
-class Actor(FalloutObject):
+class Actor(WorldObject):
     action_flee="flee"
     action_approach="approach"
     action_retreat="retreat"
@@ -25,8 +24,8 @@ class Actor(FalloutObject):
     
     def __init__(self,max_hp=50,max_hp_with_rads=50,current_hp=50,
                  special=None,armor=None,name="generic actor",factions=None,
-                 morale=12,effects=None,weapons=None,strategy=None,arena=None,
-                 coordinates=None,skills=None,inventory=None,**kwargs):
+                 morale=12,effects=None,weapons=None,strategy=None,
+                 skills=None,inventory=None,**kwargs):
         super(Actor,self).__init__(**kwargs)
         self.max_hp=max_hp
         self.max_hp_with_rads=max_hp_with_rads
@@ -64,20 +63,6 @@ class Actor(FalloutObject):
         else:
             self.strategy = strategy
         self.weapons=weapons
-        if arena == None:
-            self.arena = Arena(debug=self.debug,logger=self.logger,
-                               verbose=self.verbose,quiet=self.quiet)
-        else:
-            self.arena = arena
-        if self not in self.arena.contents:
-            self.arena.contents.append(self)
-        if coordinates == None:
-            self.coordinates = Coordinates(debug=self.debug,
-                                           logger=self.logger,
-                                           verbose=self.verbose,
-                                           quiet=self.quiet)
-        else:
-            self.coordinates = coordinates
         if skills == None:
             self.skills= Skills(self,debug=self.debug,
                                 logger=self.logger,
@@ -312,6 +297,7 @@ class Actor(FalloutObject):
             hostiles.append(p)
         if not hostiles:
             self.log("%s could not choose new target." % self.name)
+            self._target = None
             return None
         hostiles.sort(key=lambda h: h.coordinates.distance)
         self._target = hostiles[0]
@@ -438,7 +424,12 @@ class Actor(FalloutObject):
         self.determine_action_with_target()
         todo = self._action
         t = self._target
-        self.log("%s: target is %s; action is %s" % (self.name,t.name,todo))
+        tn = "None"
+        if t:
+            tn=t.name
+        self.log("%s: target is %s; action is %s" % (self.name,tn,todo))
+        if not t:
+            return
         if todo == Actor.action_flee:
             self.flee()
         elif todo == Actor.action_nothing:
@@ -665,13 +656,7 @@ class Actor(FalloutObject):
         self.log_debug("%s chance to hit %s at range %d with %s: %d." %
                        (self.name,a.name,rng,w.name,hitchance))
         return hitchance
-
-    def _remove_from_arena(self):
-        a = self.arena
-        self.arena = None
-        if a:
-            a.contents.remove(self)
-            
+    
 def _sort_weapons_by_damage(w):
     d = 0
     if w.damage.physical:

@@ -2,6 +2,7 @@
 __all__ = [ "Actor", "ActorException", "Ammo", "Arena", "Armor",
             "ArmorException", "Battle", "Coordinates", "Damage", "Dice",
             "DiceException", "Effect", "Faction", "FalloutException",
-            "FalloutObject","Range","Skills", "Special", "Strategy",
-            "StrategyException", "Weapon", "WeaponException" ]
+            "FalloutObject","Item", "Range","Skills", "Special", "Strategy",
+            "StrategyException", "Weapon", "WeaponException",
+            "WorldObject" ]
 from . import *
