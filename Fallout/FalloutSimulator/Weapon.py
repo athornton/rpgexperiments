@@ -73,7 +73,6 @@ class Weapon(FalloutObject):
                  #  decrementing plenty and some.
         else:
             raise WeaponException("Invalid ammo quantity '%s'" % r)
-        
 
     def copy(self):
         ca = None

@@ -22,14 +22,19 @@ class Actor(WorldObject):
     action_attack="attack"
     action_nothing="nothing"
     
-    def __init__(self,max_hp=50,max_hp_with_rads=50,current_hp=50,
+    def __init__(self,hp=0,max_hp=50,max_hp_with_rads=50,current_hp=50,
                  special=None,armor=None,name="generic actor",factions=None,
                  morale=12,effects=None,weapons=None,strategy=None,
                  skills=None,inventory=None,**kwargs):
         super(Actor,self).__init__(**kwargs)
-        self.max_hp=max_hp
-        self.max_hp_with_rads=max_hp_with_rads
-        self.current_hp=current_hp
+        if hp !=0:
+            self.max_hp=hp
+            self.max_hp_with_rads=hp
+            self.current_hp=hp
+        else:
+            self.max_hp=max_hp
+            self.max_hp_with_rads=max_hp_with_rads
+            self.current_hp=current_hp
         self._last_current_hp = current_hp
         self.apply_hp_constraints()
         self._action = None
