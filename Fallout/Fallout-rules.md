@@ -210,12 +210,10 @@ removes another die from the damage result.
 
 #### Poison damage
 
-Some enemies, such as Radscorpions, make envenomed attacks.  The damage
-will be given as the product of two die rolls (e.g. `1d8 x 1d4`).  The
-first die roll is the damage; the second is the duration.  Each round of
-the duration, the poisoned creature must make an `END` save (modified by
-poison toxicity) or take the amount of damage indicated.  This damage is
-re-rolled each round until the duration has expired.
+Some enemies, such as Radscorpions, make envenomed attacks.  Poison
+works like burn damage, except that you get an END save each time it
+would do damage (possibly modified by the poison's potency) to avoid
+damage, but you cannot take an action to further reduce the damage.
 
 If you are hit by a poisoned attack, but your armor causes you to take
 no damage, you are not affected by the poison either.
