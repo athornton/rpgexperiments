@@ -17,7 +17,7 @@ class Skills(FalloutObject):
     def __init__(self,name='generic skills',actor=None,**kwargs):
         super(Skills,self).__init__(**kwargs)
         self.name = name
-        if actor == None:
+        if actor == None or actor.special==None:
             self.melee = 30
             self.small_guns = 30
             self.big_guns = 30
@@ -30,19 +30,7 @@ class Skills(FalloutObject):
             self.sneak = 30
             self.observe = 30
         else:
-            sp = actor.special
-            l = sp.l
-            self.melee = int(l + 5 * sp.s)
-            self.small_guns = int(l + 5 * sp.a)
-            self.big_guns = int(l + 5 * ( sp.e + sp.a ) / 2)
-            self.explosives = int(l + 5 * (sp.a + sp.p ) / 2)
-            self.repair = int(l + 5 * (sp.i + sp.a) / 2)
-            self.lockpick = int(l + 5 * (sp.i + sp.a) / 2)
-            self.science = int(l + 5 * sp.i)
-            self.speech = int(l + 5 * sp.c)
-            self.medic = int(l + 5 * (sp.i + sp.c) / 2)
-            self.sneak = int(l + 5 * sp.a)
-            self.observe = int(l + 5 * sp.p)
+            self.recalc(actor.special)
 
     def __str__(self):
         s =  "Melee:      %d\n" % self.melee
@@ -66,3 +54,16 @@ class Skills(FalloutObject):
                    quiet=self.quiet,logger=self.logger)
         return s
     
+    def recalc(self,sp):
+        l = sp.l
+        self.melee = int(l + 5 * sp.s)
+        self.small_guns = int(l + 5 * sp.a)
+        self.big_guns = int(l + 5 * ( sp.e + sp.a ) / 2)
+        self.explosives = int(l + 5 * (sp.a + sp.p ) / 2)
+        self.repair = int(l + 5 * (sp.i + sp.a) / 2)
+        self.lockpick = int(l + 5 * (sp.i + sp.a) / 2)
+        self.science = int(l + 5 * sp.i)
+        self.speech = int(l + 5 * sp.c)
+        self.medic = int(l + 5 * (sp.i + sp.c) / 2)
+        self.sneak = int(l + 5 * sp.a)
+        self.observe = int(l + 5 * sp.p)

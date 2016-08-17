@@ -2,7 +2,7 @@
 
 import FalloutSimulator
 import logging
-import jsonpickle
+import pickle
 
 def clone_and_swap_ammo(weapon,newammo):
     w=weapon.copy()
@@ -181,30 +181,36 @@ def build_catalog():
                              ammo_remaining="some",
                              logger=lgr,verbose=verbose,debug=debug,
                              quiet=quiet)
-    weapon[".45 pistol"]=clone_and_swap_ammo(weapon[".38 pistol"], ammo[".45"])
-    weapon["10mm pistol"]=clone_and_swap_ammo(weapon[".38 pistol"],
-                                              ammo["10mm"])
     for i in [ "9mm", ".45", "10mm", ".44" ]:
-        weapon["%s pistol"]=clone_and_swap_ammo(weapon[".38 pistol"], ammo[i])
+        wnm="%s pistol" % i
+        weapon[wnm]=clone_and_swap_ammo(weapon[".38 pistol"], ammo[i])
+        weapon[wnm].name=wnm
     weapon["laser pistol"]=clone_and_swap_ammo(weapon[".38 pistol"],
                                                ammo["laser pistol"])
+    weapon["laser pistol"].name="laser pistol"
     for i in ["20ga", "12ga" ]:
-        weapon["%s shotgun" % i]=clone_and_swap_ammo(weapon[".38 pistol"],
-                                                     ammo[i])
-        weapon["%s shotgun" % i].w_range=rng["shotgun"].copy()
+        wnm="%s shotgun" % i
+        weapon[wnm]=clone_and_swap_ammo(weapon[".38 pistol"],ammo[i])
+        weapon[wnm].name=wnm
+        weapon[wnm].w_range=rng["shotgun"].copy()
     weapon["combat rifle"]=clone_and_swap_ammo(weapon[".38 pistol"],
                                                ammo["5.56mm"])
     weapon["combat rifle"].w_range=rng["rifle"].copy()
+    weapon["combat rifle"].name="combat rifle"             
     weapon["hunting rifle"]=clone_and_swap_ammo(weapon["combat rifle"],
                                                 ammo[".308"])
+    weapon["hunting rifle"].name="hunting rifle"
     weapon["laser rifle"]=clone_and_swap_ammo(weapon["combat rifle"],
                                               ammo["laser rifle"])
+    weapon["laser rifle"].name="laser rifle"
     weapon["anti-materiel rifle"]=clone_and_swap_ammo(weapon["combat rifle"],
                                                       ammo[".50"])
+    weapon["anti-materiel rifle"].name="anti-materiel rifle"             
     for i in ["grenade", "nuka grenade", "molotov","flamer"]:
         weapon[i]=clone_and_swap_ammo(weapon[".38 pistol"],ammo[i])
         weapon[i].w_range=rng["thrown"].copy()
         weapon[i].skill=sk.explosives
+        weapon[i].name=i
     
     weapon["flamer"].w_range=rng["flamer"].copy()
     weapon["flamer"].skill=sk.big_guns
@@ -214,6 +220,7 @@ def build_catalog():
                                            r_long=50,maximum=200,
                                            quiet=quiet,verbose=verbose,
                                            debug=debug,logger=lgr)
+    weapon["missile launcher"].name="missile launcher"
     weapon["fat man"]=clone_and_swap_ammo(weapon["flamer"],
                                           ammo["mini nuke"])
     weapon["fat man"].w_range=frr(name="mini nuke", short=15, medium=50,
@@ -221,10 +228,11 @@ def build_catalog():
                                   quiet=quiet,verbose=verbose,debug=debug,
                                   logger=lgr)
 
+    weapon["fat man"].name="fat man"
     # And some critters
     for i in [ "bloatfly vomit", "mirelurk acid", "stingwing venom" ]:
         weapon[i] = clone_and_swap_ammo(weapon[".38 pistol"],ammo[i])
-    
+        weapon[i].name=i
     # Now some enemies.
     fsc=FalloutSimulator.Special.Special
     fsp=dict()
@@ -238,6 +246,7 @@ def build_catalog():
                                                   quiet=quiet,logger=lgr),
                       strategy=fst(strategy=fst.melee),
                       debug=debug,verbose=verbose,quiet=quiet,logger=lgr)
+        actor[nm].recalc_skills()
 
     actor["radroach"]=actor["s1"].copy()
     actor["radroach"].weapons = [ weapon["radroach bite"].copy() ]
@@ -330,13 +339,13 @@ def build_catalog():
     catalog["weapon"]=weapon
     catalog["creature"]=actor
 
-    with open("catalog.jpck","w") as f:
-        for k1 in catalog.keys():
-            for k2 in catalog[k1].keys():
-                f.write(jsonpickle.encode(catalog[k1][k2]))
-                f.write("\n")
-    return catalog
+    save_catalog(catalog)
 
+    return catalog
+    
+def save_catalog(c):
+    with open("catalog.pck","wb") as f:
+        pickle.dump(c,f,pickle.HIGHEST_PROTOCOL)
 
 if __name__=="__main__":
     catalog=build_catalog()

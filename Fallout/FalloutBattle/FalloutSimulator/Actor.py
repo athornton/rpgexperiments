@@ -69,9 +69,10 @@ class Actor(WorldObject):
             self.strategy = strategy
         self.weapons=weapons
         if skills == None:
-            self.skills= Skills(self,debug=self.debug,
+            self.skills= Skills(actor=self,debug=self.debug,
                                 logger=self.logger,
-                                verbose=self.verbose)
+                                verbose=self.verbose,
+                                quiet=self.quiet)
         else:
             self.skills = skills
         if inventory == None:
@@ -116,7 +117,7 @@ class Actor(WorldObject):
                   special=self.special.copy(),
                   armor=self.armor.copy(),
                   morale=self.morale,
-                  strategy=self.strategy, # Just a string
+                  strategy=self.strategy.copy(),
                   arena=self.arena, # NOTE: not a copy--goes into same arena
                   coordinates=self.coordinates.copy(),
                   skills=self.skills.copy(),
@@ -154,6 +155,7 @@ class Actor(WorldObject):
     def flee(self):
         # Just find the nearest edge, and run for it.
         self._action = Actor.action_flee
+        self.strategy.strategy = Strategy.flee
         shortest=0.0
         dirx="+"
         diry="+"
@@ -200,12 +202,9 @@ class Actor(WorldObject):
     def check_coordinate_constraints(self):
         max_x = self.arena.max_x
         max_y = self.arena.max_y
-        fleeing=False
-        if self._action == Actor.action_flee:
-            fleeing=True
         c = self.coordinates
         if c.x < 0 or c.y < 0 or c.x > max_x or c.y > max_y:
-            if fleeing:
+            if self._action == Actor.action_flee:
                 self.log_debug("%s fled arena %s." % (self.name,
                                                       self.arena.name))
                 self._remove_from_arena()
@@ -279,20 +278,33 @@ class Actor(WorldObject):
             self.log("Attack (%s) missed.",ths)
 
     def select_target(self):
+        # If I am fleeing, no target:
+        sn=self.name
+        if self.strategy.strategy == Strategy.flee or \
+           self._action == Actor.action_flee:
+            self._target = None
+            self.log_debug("%s fleeing; unsetting target." % sn)
+            return
         # If I already have a target, stick with it if it is still a threat:
         if self._target:
             if self._target.arena == self.arena and \
                self._target.current_hp > 0:
+                self.log_debug("%s keeping current target %s." %
+                               (sn,self._target.name))
                 return
         # For right now, just pick closest unfriendly
         potentials = [ a for a in self.arena.contents if type(a) is Actor \
                        and a != self ]
+        pns=[ x.name for x in potentials]
+        self.log_debug("%s potential targets: %s" % (sn,pns))
         hostiles = []
         for p in potentials:
             for f in p.factions:
                 skip=False
                 for sf in self.factions:
                     if f.name in sf.friendly or f.name in sf.neutral:
+                        self.log_debug("%s eliminating allied target %s" %
+                                       (sn,self._target.name))
                         skip=True
                         break
                 if skip:
@@ -304,7 +316,11 @@ class Actor(WorldObject):
             self.log("%s could not choose new target." % self.name)
             self._target = None
             return None
+        hns = [x.name for x in hostiles]
+        self.log_debug("%s hostiles: %s" % (sn,hns))
         hostiles.sort(key=lambda h: h.coordinates.distance(self.coordinates))
+        hns = [x.name for x in hostiles]
+        self.log_debug("%s hostiles sorted by proximity: %s" % (sn,hns))
         self._target = hostiles[0]
         self.log("%s chose new target %s." % (self.name,self._target.name))
             
@@ -316,6 +332,7 @@ class Actor(WorldObject):
             # Out of weapons.  Run away
             self.log("%s has no usable weapons; fleeing." % self.name)
             self.strategy.strategy = Strategy.flee
+            self._action = Actor.action_flee
             self._weapon=None
             return None
         noranged = True
@@ -425,10 +442,14 @@ class Actor(WorldObject):
             self._remove_from_arena()
         
     def process_turn(self):
+        sn=self.name
+        self.log("Processing turn for %s." % sn)
         self.check_coordinate_constraints()
         self.remove_corpse()
         if self.arena == None:
+            self.log("%s no longer in arena." % sn)
             return
+        self.apply_effects()
         self.select_target()
         self.determine_action_with_target()
         todo = self._action
@@ -436,14 +457,16 @@ class Actor(WorldObject):
         tn = "None"
         if t:
             tn=t.name
-        self.log("%s: target is %s; action is %s" % (self.name,tn,todo))
+        self.log("%s: target is %s; action is %s" % (sn,tn,todo))
+        if todo == Actor.action_flee:
+            self.strategy.strategy = Strategy.flee
+            self.flee()
+            return
+        elif todo == Actor.action_nothing:
+            return
         if not t:
             return
-        if todo == Actor.action_flee:
-            self.flee()
-        elif todo == Actor.action_nothing:
-            pass
-        elif todo == Actor.action_retreat:
+        if todo == Actor.action_retreat:
             self.move_away(t.coordinates)
         elif todo == Actor.action_approach:
             self.move_towards(t.coordinates)           
@@ -456,53 +479,73 @@ class Actor(WorldObject):
         
     def apply_damage(self,damage,target):
         d=damage.copy()
+        tt = 0
         if d.radiation:
             d.radiation.roll(armor=target.armor)
             t=d.radiation.total
             if t > 0:
+                tt += t
                 target.max_hp_with_rads -= t
                 target.apply_hp_constraints()
         if d.physical:
             d.physical.roll(armor=target.armor)
             t = d.physical.total
             if t > 0:
+                tt += t
                 target.current_hp -= t
         if d.burn:
             d.burn.roll(armor=target.armor)
             t = d.burn.total
             if t > 0:
+                tt += t
                 target.current_hp -= t
                 d.burn.throw_out_largest()
                 if d.burn.total > 0:
-                    target.effects.append(effecttype=Effect.burn,
-                                          effect=d.burn)
+                    target.effects.append(Effect(effecttype=Effect.burn,
+                                          effect=d.burn))
         if d.poison:
             d.poison.roll(armor=target.armor)
             if not self.saving_throw("e",d.poisonsavemod):
                 t = d.poison.total
                 if t > 0:
+                    tt += t
                     target.current_hp -= t
                     d.poison.throw_out_largest()
                     if d.poison.total > 0:
-                        target.effects.append(effecttype=Effect.poison,
-                                              effect=d.poison,
-                                              poisonsavemod=d.poisonsavemod)
-        td = damage.get_total_damage()
-        if td != "0":
+                        target.effects.append(Effect(effecttype=Effect.poison,
+                                                     effect=d.poison,
+                                                     poisonsavemod=d.poisonsavemod))
+        if tt > 0:
             my_factions = [ x.name for x in self.factions ]
-            self.log("%s did %s damage to %s, causing hostility to %s" %
-                     (self.name,td,target.name,my_factions))
+            self.log("%s [%s] did %d damage to %s [%d]" %
+                     (self.name,self.current_hp,tt,target.name,
+                      target.current_hp))
             target.faction_anger(my_factions)
-        target.check_for_morale_check()
+            target.check_for_morale_check()
 
+    def check_for_morale_check(self):
+        # Check morale when first taking damage, or when you hit half HP
+        need_morale_check = False
+        if self._last_current_hp > self.current_hp:
+            if self._last_current_hp == self.max_hp:
+                need_morale_check= True
+            elif (self._last_current_hp + 0.0) / self.max_hp > 0.5:
+                if (self.current_hp + 0.0) / self.max_hp <= 0.5:
+                    need_morale_check=True
+            self._last_current_hp = self.current_hp
+        if need_morale_check:
+            self.check_morale()
+            
     def check_morale(self):
         c = Dice(sides=6,num_dice=2,verbose=self.verbose,debug=self.debug,
                  logger=self.logger)
         self.log("Morale Check for %s: needed <= than %d, got %d." %
                        (self.name,self.morale,c.total))
-        if c.total <= self.morale:
-            return True
-        return False
+        if c.total > self.morale:
+            self.log("%s failed morale check; fleeing." % self.name)
+            self.strategy.strategy = Strategy.flee
+            self._action = Actor.action_flee
+            self._target = None
 
     def saving_throw(self,s,mod):
         sp = self.special
@@ -550,8 +593,6 @@ class Actor(WorldObject):
                 if wf not in mf.hostile:
                     self.log("Faction %s is now hostile to %s" % (mfn,wf))
                     mf.hostile.append(wf)
-                else:
-                    self.log("Faction %s already hostile to %s" % (mfn,wf))
             
     def apply_splash_damage(self,weapon,target):
         if not weapon or not weapon.ammo or weapon.ammo.splash_radius == 0:
@@ -602,22 +643,6 @@ class Actor(WorldObject):
         else:
             self.effects=None
         self.check_for_morale_check()
-
-
-    def check_for_morale_check(self):
-        # Check morale when first taking damage, or when you hit half HP
-        need_morale_check = False
-        if self._last_current_hp > self.current_hp:
-            if self._last_current_hp == self.max_hp:
-                need_morale_check= True
-            elif (self._last_current_hp + 0.0) / self.max_hp > 0.5:
-                if (self.current_hp + 0.0) / self.max_hp <= 0.5:
-                    need_morale_check=True
-            self._last_current_hp = self.current_hp
-        if need_morale_check:
-            if not self.check_morale():
-                self._action = Actor.action_flee
-                self.strategy.strategy = Strategy.flee
             
     def _get_hit_chance(self,w,a):
         skillname = w.skill
@@ -665,6 +690,9 @@ class Actor(WorldObject):
         self.log_debug("%s chance to hit %s at range %d with %s: %d." %
                        (self.name,a.name,rng,w.name,hitchance))
         return hitchance
+
+    def recalc_skills(self):
+        self.skills.recalc(self.special)
     
 def _sort_weapons_by_damage(w):
     d = 0
@@ -672,10 +700,10 @@ def _sort_weapons_by_damage(w):
         d += w.damage.physical.num_dice * ((1.0 + w.damage.physical.sides) \
                                            / 2 ) + w.damage.physical.mod
     if w.damage.burn:
-        d += w.damage.burn.num_dice * ((1.0 + w.damage.physical.sides) \
+        d += w.damage.burn.num_dice * ((1.0 + w.damage.burn.sides) \
                                        / 2 ) + w.damage.burn.mod
     if w.damage.radiation:
-        d += w.damage.physical.num_dice * ((1.0 + w.damage.radiation.sides) \
-                                           / 2 ) + w.damage.radiation.mod
+        d += w.damage.radiation.num_dice * ((1.0 + w.damage.radiation.sides) \
+                                            / 2 ) + w.damage.radiation.mod
     return d
     

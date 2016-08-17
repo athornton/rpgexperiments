@@ -6,6 +6,17 @@ class FalloutObject(object):
         self.debug=kwargs.get("debug",False)
         self.logger=kwargs.get("logger",None)
 
+    def __getstate__(self):
+        """ This is called before pickling. """
+        state = self.__dict__.copy()
+        state['logger'] = None
+        return state
+
+    def __setstate__(self, state):
+        """ This is called while unpickling. """
+        self.__dict__.update(state)
+        self.__dict__['logger']=None
+        
     def log(self,msg="",*args,**kwargs):
         if not self.logger:
             return

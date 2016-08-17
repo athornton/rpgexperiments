@@ -11,11 +11,7 @@ system.  It's a class (FalloutArmor.py) and a little harness
 (fallout-armor.py).  It requires Python 3.4 (for the statistics module)
 and you need matplotlib to get the graphs (but it will run without it).
 
-### Fallout/[FalloutSimulator](https://github.com/athornton/rpgexperiments/tree/master/Fallout/FalloutSimulator)
+### Fallout/[FalloutBattle](https://github.com/athornton/rpgexperiments/tree/master/Fallout/FalloutBattle)
 
-Early days of a more general Fallout combat simulator.  So far,
-one-on-one combat between combatants who use only weapons that do
-physical damage and don't do any splash damage seems to work.
-
-Here is a simple [battle test script](https://github.com/athornton/rpgexperiments/tree/master/Fallout/testbattle.py)
-
+Incremental progress towards a simulator for a battle in the Fallout
+system. 

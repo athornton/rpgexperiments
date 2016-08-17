@@ -117,12 +117,13 @@ class Dice(FalloutObject):
 
     def throw_out_largest(self):
         self.log_debug("Throwing out largest for %s." % str(self))
+        dl = []
         for d in self.dice:
-            dl = [ x for x in d.rolled ]
+            dl.append(d.rolled)
             md = max(dl)
             di = dl.index(md)
-            self.dice.rolled[di] = 0
-            self.dice.rawrolled[di] = 0
+            self.dice[di].rolled = 0
+            self.dice[di].rawrolled = 0
         self._recalc()
         self.log_debug("After throwing out largest: %s." % str(self))
         
