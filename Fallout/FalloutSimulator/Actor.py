@@ -116,7 +116,7 @@ class Actor(WorldObject):
                   special=self.special.copy(),
                   armor=self.armor.copy(),
                   morale=self.morale,
-                  strategy=self.strategy.copy(),
+                  strategy=self.strategy, # Just a string
                   arena=self.arena, # NOTE: not a copy--goes into same arena
                   coordinates=self.coordinates.copy(),
                   skills=self.skills.copy(),
@@ -304,7 +304,7 @@ class Actor(WorldObject):
             self.log("%s could not choose new target." % self.name)
             self._target = None
             return None
-        hostiles.sort(key=lambda h: h.coordinates.distance)
+        hostiles.sort(key=lambda h: h.coordinates.distance(self.coordinates))
         self._target = hostiles[0]
         self.log("%s chose new target %s." % (self.name,self._target.name))
             
@@ -336,18 +336,22 @@ class Actor(WorldObject):
                 nosplashw.append(w)
             else:
                 sr = w.ammo.get_max_splash()
-                in_splash_range = [ a for a in
-                                    actor.arena.get_contents_around_point(
-                                        actor.coordinates,radius)
-                                    if type(a) is Actor ]
+                in_splash_range = [ aa for aa in
+                                    a.arena.get_contents_around_point(
+                                        a.coordinates,sr)
+                                    if type(aa) is Actor ]
                 good=True
                 for o in in_splash_range:
                     # Refuse weapon if splash might hit friendlies
                     for f in self.factions:
-                        if f in o.factions.friendly:
-                            self.log_debug("%s rejecting weapon %s (splash)." %
-                                           (self.name,w.name))
-                            good=False
+                        fn = f.name
+                        for ff in o.factions:
+                            if f.name in ff.friendly:
+                                self.log_debug("%s rejecting %s (splash)." %
+                                               (self.name,w.name))
+                                good=False
+                                break
+                        if not good:
                             break
                 if good:
                     nosplashw.append(w)

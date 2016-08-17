@@ -28,5 +28,6 @@ class Arena(FalloutObject):
         return a
     
     def get_contents_around_point(self,p,rng):
-        return [ c for c in contents if ( a.coordinates.distance(p) < rng ) ]
+        return [ c for c in self.contents if
+                 ( c.coordinates.distance(p) < rng ) ]
 

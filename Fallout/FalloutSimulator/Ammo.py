@@ -35,9 +35,9 @@ class Ammo(FalloutObject):
         if self.damage.burn:
             bd = self.damage.burn.num_dice - 1
         if self.damage.radiation:
-            rd = w.damage.radiation.num_dice - 1
+            rd = self.damage.radiation.num_dice - 1
         if self.damage.poison:
-            nd = w.damage.poison.num_dice - 1
+            nd = self.damage.poison.num_dice - 1
         rmult = max([pd,bd,rd,nd])
-        radius = rmult * w.ammo_splash_radius
+        radius = rmult * self.splash_radius
         return radius
