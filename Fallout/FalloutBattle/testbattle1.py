@@ -46,9 +46,11 @@ if __name__=="__main__":
                                      logger=lgr)
 
     r1=catalog["creature"]["junkie raider"].copy()
+    r1.morale=8
     r1.recalc_skills()
     r1.name="Raider Junkie #1"
     r2=catalog["creature"]["junkie raider"].copy()
+    r2.morale=8    
     r2.recalc_skills()
     r2.name="Raider Junkie #2"
     r1f=FalloutSimulator.Faction.Faction(name="Raider #1")
@@ -61,6 +63,6 @@ if __name__=="__main__":
     r2.coordinates.x=40
     r2.coordinates.y=40
     victors=b.fight()
-    print("Victors:")
+    print("Victors (%d turns):" % b.get_turns())
     for x in victors:
         print(x)

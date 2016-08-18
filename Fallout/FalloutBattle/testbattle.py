@@ -63,17 +63,22 @@ if __name__=="__main__":
 
     m1=catalog["creature"]["super mutant overlord"].copy()
     m1.recalc_skills()
+    m1.morale=10
     m1.name="Super Mutant Overlord"
     m2=catalog["creature"]["super mutant (ranged)"].copy()
+    m2.morale=9
     m2.recalc_skills()
     m2.name="Super Mutant Ranged #1"
     m3=catalog["creature"]["super mutant (ranged)"].copy()
+    m3.morale=9    
     m3.recalc_skills()    
     m3.name="Super Mutant Ranged #2"
     m4=catalog["creature"]["super mutant (melee)"].copy()
+    m4.morale=9    
     m4.recalc_skills()    
     m4.name="Super Mutant Melee #1"
     m5=catalog["creature"]["super mutant (melee)"].copy()
+    m5.morale=9    
     m5.recalc_skills()    
     m5.name="Super Mutant Melee #2"
     
@@ -110,6 +115,6 @@ if __name__=="__main__":
     d1.coordinates.y=40    
     
     victors=b.fight()
-    print("Victors:")
+    print("Victors (%d turns):" % b.get_turns())
     for x in victors:
         print(x)

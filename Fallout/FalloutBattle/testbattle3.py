@@ -87,6 +87,6 @@ if __name__=="__main__":
     d1.coordinates.y=40
 
     victors=b.fight()
-    print("Victors:")
+    print("Victors (%d turns):" % b.get_turns())
     for x in victors:
         print(x)

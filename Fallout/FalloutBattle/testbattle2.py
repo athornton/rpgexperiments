@@ -69,6 +69,7 @@ if __name__=="__main__":
     r1f=FalloutSimulator.Faction.Faction(name="Raider")
     r1.factions = [ r1f ]
     r1.skills.big_guns = 50
+    r1.morale=9
     
     d1=catalog["creature"]["deathclaw"].copy()
     d1.recalc_skills()
@@ -82,6 +83,6 @@ if __name__=="__main__":
     d1.coordinates.y=40
 
     victors=b.fight()
-    print("Victors:")
+    print("Victors (%d turns):" % b.get_turns())
     for x in victors:
         print(x)

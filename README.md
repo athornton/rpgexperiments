@@ -14,4 +14,19 @@ and you need matplotlib to get the graphs (but it will run without it).
 ### Fallout/[FalloutBattle](https://github.com/athornton/rpgexperiments/tree/master/Fallout/FalloutBattle)
 
 Incremental progress towards a simulator for a battle in the Fallout
-system. 
+system.
+
+Things implemented:
+
+* Physical, burn, radiation, and poison damage
+* Splash damage (mostly)
+* Ongoing, decreasing-over-time effects.
+* Morale checks and fleeing the arena
+* Factions
+
+Things not implemented:
+* Aiming/aiming bonuses
+* Reasonable, complex strategies
+* Inventory items
+* Healing
+
