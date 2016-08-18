@@ -68,8 +68,8 @@ if __name__=="__main__":
     r1.name="Raider Boomer"
     r1f=FalloutSimulator.Faction.Faction(name="Raider")
     r1.factions = [ r1f ]
-    r1.skills.big_guns=80
-
+    r1.skills.big_guns = 50
+    
     d1=catalog["creature"]["deathclaw"].copy()
     d1.recalc_skills()
     d1.name="Deathclaw"

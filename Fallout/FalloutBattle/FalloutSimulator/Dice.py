@@ -78,17 +78,12 @@ class Dice(FalloutObject):
         return s
 
     def _getsum(self):
-        sum=0
-        for d in self.dice:
-            sum=sum+d.rolled
-        return sum
+        return sum([d.rolled for d in self.dice])
     
     def _getmod(self):
         if self.sum == 0:
-            return
-        total=self.sum
-        if self.mod != 0:
-            total = total + self.mod
+            return 0
+        total=self.sum + self.mod
         if total < 0:
             total = 0
         return total
