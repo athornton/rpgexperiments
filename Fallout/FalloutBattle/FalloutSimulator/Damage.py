@@ -32,8 +32,7 @@ class Damage(FalloutObject):
         return s
 
     def copy(self):
-        n=Damage(debug=self.debug,verbose=self.verbose,quiet=self.quiet,
-                 logger=self.logger)
+        n=Damage()
         if self.poisonsavemod:
             n.poisonsavemod=self.poisonsavemod
         if self.physical:
@@ -44,26 +43,46 @@ class Damage(FalloutObject):
             n.radiation=self.radiation.copy()
         if self.poison:
             n.poison=self.poison.copy()
+        n.debug=self.debug
+        n.quiet=self.quiet
+        n.verbose=self.verbose
+        n.logger=self.logger
         return n
 
+    def roll(self):
+        if self.physical:
+            self.physical.roll()
+        if self.burn:
+            self.burn.roll()
+        if self.radiation:
+            self.radiation.roll()
+        if self.poison:
+            self.poison.roll()
+    
     def throw_out_largest(self):
+        self.log_debug("Throwing out largest for %s." % self)
         if self.physical:
             self.physical.throw_out_largest()
             if self.physical.total == 0:
+                self.log_debug("Physical damage decreased to 0.")
                 self.physical = None
         if self.burn:
             self.burn.throw_out_largest()
             if self.burn.total == 0:
+                self.log_debug("Burn damage decreased to 0.")
                 self.burn = None
         if self.radiation:
-            self.radiation.throw_out_largest()
+            self.radiation.throw_out_largest()           
             if self.radiation.total == 0:
+                self.log_debug("Radiation damage decreased to 0.")
                 self.radiation = None
         if self.poison:
             self.poison.throw_out_largest()
             if self.poison.total == 0:
+                self.log_debug("Poison damage decreased to 0.")
                 self.poison = None
-
+        self.log_debug("Threw out largest for %s." % self)
+                
     def get_total_damage(self):
         s=""
         if self.physical:

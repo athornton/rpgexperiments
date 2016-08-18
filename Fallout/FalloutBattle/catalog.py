@@ -7,6 +7,7 @@ import pickle
 def clone_and_swap_ammo(weapon,newammo):
     w=weapon.copy()
     w.ammo=newammo.copy()
+    w.damage=w.ammo.damage
     return w
 
 def build_catalog():
@@ -308,6 +309,7 @@ def build_catalog():
     actor["Sgt. Gutsy"].strategy= fst(strategy=fst.ranged)
     actor["Sgt. Gutsy"].weapons[1].ammo_remaining = "plenty"
     actor["Sgt. Gutsy"].weapons[2].ammo_remaining = "some"
+    actor["Sgt. Gutsy"].armor = armor["heavy"].copy()
 
     actor["mirelurk killclaw"]=actor["s8"].copy()
     actor["mirelurk killclaw"].weapons = [ weapon["mirelurk kill-claw"].copy(),

@@ -271,6 +271,7 @@ class Actor(WorldObject):
                     logger=self.logger,quiet=self.quiet).rolled
         ths = "needed <= %d; rolled %d" % (hitchance,tohit)
         if tohit <= hitchance:
+            w.damage.roll()
             self.apply_damage(w.damage,actor)
             self.log("Attack (%s) hit: %s -> %s",ths,w.damage,
                      w.damage.get_total_damage())
@@ -304,7 +305,7 @@ class Actor(WorldObject):
                 for sf in self.factions:
                     if f.name in sf.friendly or f.name in sf.neutral:
                         self.log_debug("%s eliminating allied target %s" %
-                                       (sn,self._target.name))
+                                       (sn,p.name))
                         skip=True
                         break
                 if skip:
@@ -384,7 +385,8 @@ class Actor(WorldObject):
             if rng <= rmax:
                 inrange.append(w)
             else:
-                self.log_debug("Rejecting weapon %s: out of range." % w.name)
+                self.log_debug("%s: rejecting weapon %s: out of range." %
+                               (self.name,w.name))
         # Return the last weapon in the list (so the one with the most damage)
         #  if there is one.
         if not inrange:
@@ -450,6 +452,10 @@ class Actor(WorldObject):
             self.log("%s no longer in arena." % sn)
             return
         self.apply_effects()
+        self.remove_corpse()
+        if self.arena == None:
+            self.log("%s no longer in arena." % sn)
+            return
         self.select_target()
         self.determine_action_with_target()
         todo = self._action
@@ -500,9 +506,15 @@ class Actor(WorldObject):
                 tt += t
                 target.current_hp -= t
                 d.burn.throw_out_largest()
-                if d.burn.total > 0:
+                if d.burn and d.burn.total > 0:
+                    if not target.effects:
+                        target.effects=[]
                     target.effects.append(Effect(effecttype=Effect.burn,
-                                          effect=d.burn))
+                                                 effect=d.burn,
+                                                 debug=self.debug,
+                                                 verbose=self.verbose,
+                                                 logger=self.logger,
+                                                 quiet=self.quiet))
         if d.poison:
             d.poison.roll(armor=target.armor)
             if not self.saving_throw("e",d.poisonsavemod):
@@ -511,10 +523,17 @@ class Actor(WorldObject):
                     tt += t
                     target.current_hp -= t
                     d.poison.throw_out_largest()
-                    if d.poison.total > 0:
+                    if d.poison and d.poison.total > 0:
+                        if not target.effects:
+                            target.effects=[]
                         target.effects.append(Effect(effecttype=Effect.poison,
                                                      effect=d.poison,
-                                                     poisonsavemod=d.poisonsavemod))
+                                                     poisonsavemod=\
+                                                     d.poisonsavemod,
+                                                     debug=self.debug,
+                                                     verbose=self.verbose,
+                                                     logger=self.logger,
+                                                     quiet=self.quiet))
         if tt > 0:
             my_factions = [ x.name for x in self.factions ]
             self.log("%s [%s] did %d damage to %s [%d]" %
@@ -618,10 +637,15 @@ class Actor(WorldObject):
         if not self.effects:
             return
         remainder=[]
+        self.log_debug
         for e in self.effects:
             effecttype = e.effecttype
-            self.log("Applying ongoing effect %s: %d" %
-                     (effecttype,e.effect.total))
+            if e.effect and e.effect.total:
+                self.log("%s: applying ongoing effect %s: %d" %
+                         (self.name,effecttype,e.effect.total))
+            else:
+                e.effect = None
+                continue
             if effecttype == Effect.burn:
                 self.current_hp -= e.effect.total
             elif effecttype == Effect.poison:
@@ -633,11 +657,19 @@ class Actor(WorldObject):
             elif effecttype == Effect.healrad:
                 self.max_hp_with_rads += e.effect.total
                 self.apply_hp_constraints()
-                e.effect.throw_out_largest()
+            self.log_debug("Effect before reduction: %s -> %s" %
+                           (e.effect,[ x.rolled for x in e.effect.dice ]))
+            e.effect.throw_out_largest()
+            self.log_debug("Effect after reduction: %s -> %s" %
+                           (e.effect,[ x.rolled for x in e.effect.dice ]))
             if e.effect.total != 0:
                 remainder.append(Effect(effecttype=effecttype,
                                         effect=e.effect,poisonsavemod=
-                                        e.effect.poisonsavemod))
+                                        e.poisonsavemod,debug=self.debug,
+                                        quiet=self.quiet,verbose=self.verbose,
+                                        logger=self.logger))
+            else:
+                self.log("Effect on %s has expired." % self.name)
         if remainder:
             self.effects=remainder
         else:

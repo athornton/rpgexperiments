@@ -91,3 +91,4 @@ class Battle(FalloutObject):
         done = False
         while not done:
             done=self.process_turn()
+        return self.get_actors()

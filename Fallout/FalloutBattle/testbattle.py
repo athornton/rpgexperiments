@@ -20,6 +20,23 @@ def load_catalog(filename=None,debug=False,quiet=False,verbose=False,
             catalog[k][kk].quiet=quiet
             catalog[k][kk].verbose=verbose
             catalog[k][kk].logger=logger
+    for k in catalog["ammo"]:
+        dd=catalog["ammo"][k].damage
+        dd.debug=debug
+        dd.quiet=quiet
+        dd.verbose=verbose
+        dd.logger=logger
+        for dt in [ dd.physical, dd.burn, dd.radiation, dd.poison ]:
+            if dt:
+                dt.debug=debug
+                dt.quiet=quiet
+                dt.verbose=verbose
+                dt.logger=logger
+                for dx in dt.dice:
+                    dx.debug=debug
+                    dx.quiet=quiet
+                    dx.verbose=verbose
+                    dx.logger=logger
     return catalog
 
 
@@ -92,8 +109,7 @@ if __name__=="__main__":
     d1.coordinates.x=40
     d1.coordinates.y=40    
     
-    b.fight()
-
+    victors=b.fight()
     print("Victors:")
-    for x in b.get_actors():
+    for x in victors:
         print(x)

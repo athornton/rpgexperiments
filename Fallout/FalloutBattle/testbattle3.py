@@ -20,14 +20,31 @@ def load_catalog(filename=None,debug=False,quiet=False,verbose=False,
             catalog[k][kk].quiet=quiet
             catalog[k][kk].verbose=verbose
             catalog[k][kk].logger=logger
+    for k in catalog["ammo"]:
+        dd=catalog["ammo"][k].damage
+        dd.debug=debug
+        dd.quiet=quiet
+        dd.verbose=verbose
+        dd.logger=logger
+        for dt in [ dd.physical, dd.burn, dd.radiation, dd.poison ]:
+            if dt:
+                dt.debug=debug
+                dt.quiet=quiet
+                dt.verbose=verbose
+                dt.logger=logger
+                for dx in dt.dice:
+                    dx.debug=debug
+                    dx.quiet=quiet
+                    dx.verbose=verbose
+                    dx.logger=logger
     return catalog
 
 
 if __name__=="__main__":
-    debug=False
-    quiet=True
+    debug=True
+    quiet=False
     verbose=False
-    name="Raider vs. Raider"
+    name="Sgt. Gutsies vs Killclaw"
     lgr=logging.getLogger(name=name)
     lgr.setLevel(logging.DEBUG)
     ch=logging.StreamHandler()
@@ -45,21 +62,30 @@ if __name__=="__main__":
                                      quiet=quiet,debug=debug,verbose=verbose,
                                      logger=lgr)
 
-    r1=catalog["creature"]["junkie raider"].copy()
+    r1=catalog["creature"]["Sgt. Gutsy"].copy()
     r1.recalc_skills()
-    r1.name="Raider Junkie #1"
-    r2=catalog["creature"]["junkie raider"].copy()
+    r1.name="Sgt. Gutsy #1"
+    r2=catalog["creature"]["Sgt. Gutsy"].copy()
     r2.recalc_skills()
-    r2.name="Raider Junkie #2"
-    r1f=FalloutSimulator.Faction.Faction(name="Raider #1")
+    r2.name="Sgt. Gutsy #2"
+
+    r1f=FalloutSimulator.Faction.Faction(name="Sgt. Gutsy")
     r1.factions = [ r1f ]
-    r2f=FalloutSimulator.Faction.Faction(name="Raider #2")    
-    r2.factions = [ r2f ]
+    r2.factions = [ r1f ]
+
+    d1=catalog["creature"]["mirelurk killclaw"].copy()
+    d1.recalc_skills()
+    d1.name="Mirelurk Killclaw"
+    df=FalloutSimulator.Faction.Faction(name="mirelurk killclaw")
+    d1.factions=[df]
     rc=FalloutSimulator.Coordinates.Coordinates(x=10,y=10)
     b.add_actor_at_coords(r1,rc.copy())
-    b.add_actor_at_coords(r2,rc.copy())
-    r2.coordinates.x=40
+    b.add_actor_at_coords(r2,rc.copy())    
+    b.add_actor_at_coords(d1,rc.copy())
     r2.coordinates.y=40
+    d1.coordinates.x=40
+    d1.coordinates.y=40
+
     victors=b.fight()
     print("Victors:")
     for x in victors:

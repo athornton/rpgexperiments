@@ -20,7 +20,10 @@ class Effect(FalloutObject):
 
     def copy(self):
         e=Effect(effecttype=self.effecttype,poisonsavemod = self.poisonsavemod,
-                 effect=self.effect.copy(),debug=self.debug,quiet=self.quiet,
-                 verbose=self.verbose,logger=self.logger)
+                 effect=self.effect.copy(debug=self.debug,quiet=self.quiet,
+                                         verbose=self.verbose,
+                                         logger=self.logger),
+                 debug=self.debug,quiet=self.quiet,verbose=self.verbose,
+                 logger=self.logger)
         return e
     

@@ -116,7 +116,8 @@ class Dice(FalloutObject):
         self._recalc()
 
     def throw_out_largest(self):
-        self.log_debug("Throwing out largest for %s." % str(self))
+        self.log_debug("Throwing out largest for %s -> %s." %
+                       (str(self),str(self.dice)))
         dl = []
         for d in self.dice:
             dl.append(d.rolled)
@@ -125,7 +126,8 @@ class Dice(FalloutObject):
             self.dice[di].rolled = 0
             self.dice[di].rawrolled = 0
         self._recalc()
-        self.log_debug("After throwing out largest: %s." % str(self))
+        self.log_debug("After throwing out largest: %s -> %s." %
+                       (str(self),str(self.dice)))
         
     def apply_armor(self,armor):
         if not armor:
