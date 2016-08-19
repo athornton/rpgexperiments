@@ -484,6 +484,7 @@ class Actor(WorldObject):
             raise ActorException("Invalid action '%s'" % todo)
         
     def apply_damage(self,damage,target):
+        ti=target.current_hp
         d=damage.copy()
         tt = 0
         if d.radiation:
@@ -535,9 +536,10 @@ class Actor(WorldObject):
                                                      logger=self.logger,
                                                      quiet=self.quiet))
         if tt > 0:
+            dhp = ti - target.current_hp
             my_factions = [ x.name for x in self.factions ]
             self.log("%s [%s] did %d damage to %s [%d]" %
-                     (self.name,self.current_hp,tt,target.name,
+                     (self.name,self.current_hp,dhp,target.name,
                       target.current_hp))
             target.faction_anger(my_factions)
             target.check_for_morale_check()

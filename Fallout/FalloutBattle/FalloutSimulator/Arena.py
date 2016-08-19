@@ -20,9 +20,15 @@ class Arena(FalloutObject):
         return s
 
     def copy(self):
-        a = Arena(name=self.name,max_x=self.max_x,max_y=self.max_y,
-                  debug=self.debug,verbose=self.verbose,quiet=self.quiet,
-                  logger=self.logger)
+        a = Arena()
+        a.name=self.name
+        a.max_x=self.max_x
+        a.max_y=self.max_y
+        a.debug=self.debug
+        a.verbose=self.verbose
+        a.quiet=self.quiet
+        a.logger=self.logger
+        a.contents=[]
         for c in self.contents:
             a.contents.append(c.copy())
         return a

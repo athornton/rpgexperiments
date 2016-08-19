@@ -24,7 +24,7 @@ def load_catalog(filename=None,debug=False,quiet=False,verbose=False,
 
 
 if __name__=="__main__":
-    debug=False
+    debug=True
     quiet=True
     verbose=False
     name="Raider vs. Raider"
