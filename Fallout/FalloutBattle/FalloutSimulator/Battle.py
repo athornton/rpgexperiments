@@ -79,6 +79,7 @@ class Battle(FalloutObject):
             return True # Battle is over because no one is hostile to
                         #  anyone else (or no one is left)
         actor_list_by_speed=sorted(all_actors,key= lambda n: n.special.a)
+        actor_list_by_speed.reverse()
         self._turns += 1
         for a in actor_list_by_speed:
             if a.arena != self.arena:

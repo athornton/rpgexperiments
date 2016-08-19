@@ -50,13 +50,13 @@ if __name__=="__main__":
     ch.setLevel(logging.DEBUG)
     lgr.addHandler(ch)
 
-    trials=500
+    trials=1000
     
     catalog=load_catalog(filename="catalog.pck",debug=debug,quiet=quiet,
                          verbose=verbose,logger=lgr)
 
     results=dict()
-    mname="Mutants (melee, ranged, overlord) vs. Deathclaw"
+    mname="Mutants (melee x 2, ranged, overlord) vs. Deathclaw"
     results[mname]=dict()
     results[mname]["by_victor"]=dict()
 
@@ -71,12 +71,17 @@ if __name__=="__main__":
     m3=catalog["creature"]["super mutant (melee)"].copy()
     m3.morale=9    
     m3.recalc_skills()    
-    m3.name="Super Mutant (Melee)"
+    m3.name="Super Mutant (Melee) #1"
+    m4=catalog["creature"]["super mutant (melee)"].copy()
+    m4.morale=9    
+    m4.recalc_skills()    
+    m4.name="Super Mutant (Melee) #2"
     
     mf=FalloutSimulator.Faction.Faction(name="mutants")
     m1.factions = [ mf ]
     m2.factions = [ mf ]
     m3.factions = [ mf ]
+    m4.factions = [ mf ]
 
     d1=catalog["creature"]["deathclaw"].copy()
     d1.recalc_skills()
@@ -85,11 +90,13 @@ if __name__=="__main__":
     d1.factions=[df]
     
     mc=FalloutSimulator.Coordinates.Coordinates(x=10,y=10)
-    m2.coordinates.x=11
+    m2.coordinates.x=9
     m2.coordinates.y=9
     m3.coordinates.x=9
     m3.coordinates.y=11
-
+    m4.coordinates.x=11
+    m4.coordinates.y=9
+    
     d1.coordinates.x=40
     d1.coordinates.y=40    
     
@@ -105,10 +112,11 @@ if __name__=="__main__":
     for i in range(trials):
         b=b1.copy()
         b.arena=a1.copy()
-        b.add_actor_at_coords(m1.copy(),mc.copy())
-        b.add_actor_at_coords(m2.copy(),mc.copy())
-        b.add_actor_at_coords(m3.copy(),mc.copy())
-        b.add_actor_at_coords(d1.copy(),mc.copy())
+        b.add_actor_at_coords(m1.copy(),m1.coordinates.copy())
+        b.add_actor_at_coords(m2.copy(),m2.coordinates.copy())
+        b.add_actor_at_coords(m3.copy(),m3.coordinates.copy())
+        b.add_actor_at_coords(m4.copy(),m4.coordinates.copy())
+        b.add_actor_at_coords(d1.copy(),d1.coordinates.copy())
 
         b.fight()
         victors=b.get_actors()

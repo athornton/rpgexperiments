@@ -739,5 +739,5 @@ def _sort_weapons_by_damage(w):
     if w.damage.radiation:
         d += w.damage.radiation.num_dice * ((1.0 + w.damage.radiation.sides) \
                                             / 2 ) + w.damage.radiation.mod
-    return d
+    return -d
     
