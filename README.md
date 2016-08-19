@@ -29,4 +29,6 @@ Things not implemented:
 * Reasonable, complex strategies
 * Inventory items
 * Healing
-
+* Cover
+* Actors occupying space/Actors blocking shots
+* Splash damage on misses
