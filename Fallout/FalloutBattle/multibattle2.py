@@ -42,7 +42,7 @@ def load_catalog(filename=None,debug=False,quiet=False,verbose=False,
 def plot(results,enemylist,trials):
     import numpy as np
     import matplotlib.pyplot as plt
-    
+
     for mn in results:
         allnames=list((results[mn]["by_victor"]).keys())
         hp=dict()
@@ -64,7 +64,7 @@ def plot(results,enemylist,trials):
         hs = []
         for e in enemylist:
             if e in hp:
-                if e != "Deathclaw":
+                if e != "Mirelurk Killclaw":
                     hs.append(hp[e])
                 else:
                     hs.append([ -x for x in hp[e] ])
@@ -89,8 +89,8 @@ def plot(results,enemylist,trials):
             ss.append(sl)
         w=1
         p=[]
-        colors=["Red", "DarkRed", "Gold", "Salmon", "Green" ]
-        for i in range(0,5):
+        colors=["Red", "Green" ]
+        for i in range(0,2):
             if i == 0 or i == (len(colors) - 1):
                 b=[0]*trials
             else:
@@ -102,11 +102,11 @@ def plot(results,enemylist,trials):
                     b.append(sumb)
             p.append(plt.bar(rt,ss[i],w,color=colors[i],bottom=b,
                              edgecolor="none"))
-        plt.ylabel('HP remaining (Deathclaw shown as negative)')
+        plt.ylabel('HP remaining (Mirelurk shown as negative)')
             
         plt.title("Survival of %s" % mname)
         plt.legend(p,enemylist,loc=2)
-        plt.savefig("MutantsVsDeathclaw.pdf",format="pdf")
+        plt.savefig("GutsyVsMirelurk.pdf",format="pdf")
         plt.show()
 
 if __name__=="__main__":
@@ -126,55 +126,27 @@ if __name__=="__main__":
                          verbose=verbose,logger=lgr)
 
     results=dict()
-    mname="Mutants (melee x 2, ranged, overlord) vs. Deathclaw"
+    mname="Sgt. Gutsy vs. Mirelurk Killclaw"
     results[mname]=dict()
     results[mname]["by_victor"]=dict()
 
-    enemylist=[ "Super Mutant Overlord", "Super Mutant (Ranged)",
-                "Super Mutant (Melee) #1","Super Mutant (Melee) #2",
-                "Deathclaw" ]
+    enemylist=[ "Sgt. Gutsy", "Mirelurk Killclaw" ]
 
-    
-    m1=catalog["creature"]["super mutant overlord"].copy()
-    m1.recalc_skills()
-    m1.morale=10
-    m1.name=enemylist[0]
-    m2=catalog["creature"]["super mutant (ranged)"].copy()
-    m2.morale=9
-    m2.recalc_skills()
-    m2.name=enemylist[1]
-    m3=catalog["creature"]["super mutant (melee)"].copy()
-    m3.morale=9    
-    m3.recalc_skills()    
-    m3.name=enemylist[2]
-    m4=catalog["creature"]["super mutant (melee)"].copy()
-    m4.morale=9    
-    m4.recalc_skills()    
-    m4.name=enemylist[3]
-    
-    mf=FalloutSimulator.Faction.Faction(name="mutants")
-    m1.factions = [ mf ]
-    m2.factions = [ mf ]
-    m3.factions = [ mf ]
-    m4.factions = [ mf ]
+    r1=catalog["creature"]["Sgt. Gutsy"].copy()
+    r1.recalc_skills()
+    r1.name=enemylist[0]
 
-    d1=catalog["creature"]["deathclaw"].copy()
+    r1f=FalloutSimulator.Faction.Faction(name="Sgt. Gutsy")
+    r1.factions = [ r1f ]
+
+    d1=catalog["creature"]["mirelurk killclaw"].copy()
     d1.recalc_skills()
-    d1.name=enemylist[4]
-    df=FalloutSimulator.Faction.Faction(name="deathclaw")
+    d1.name=enemylist[1]
+    df=FalloutSimulator.Faction.Faction(name="mirelurk killclaw")
     d1.factions=[df]
-    
-    mc=FalloutSimulator.Coordinates.Coordinates(x=10,y=10)
-    m2.coordinates.x=9
-    m2.coordinates.y=9
-    m3.coordinates.x=9
-    m3.coordinates.y=11
-    m4.coordinates.x=11
-    m4.coordinates.y=9
-    
+
     d1.coordinates.x=40
-    d1.coordinates.y=40    
-    
+    d1.coordinates.y=40
 
     a1=FalloutSimulator.Arena.Arena(name=mname,
                                    quiet=quiet,debug=debug,verbose=verbose,
@@ -186,10 +158,7 @@ if __name__=="__main__":
     for i in range(trials):
         b=b1.copy()
         b.arena=a1.copy()
-        b.add_actor_at_coords(m1.copy(),m1.coordinates.copy())
-        b.add_actor_at_coords(m2.copy(),m2.coordinates.copy())
-        b.add_actor_at_coords(m3.copy(),m3.coordinates.copy())
-        b.add_actor_at_coords(m4.copy(),m4.coordinates.copy())
+        b.add_actor_at_coords(r1.copy(),r1.coordinates.copy())
         b.add_actor_at_coords(d1.copy(),d1.coordinates.copy())
 
         b.fight()
@@ -253,5 +222,4 @@ if __name__=="__main__":
         print(" " + q[tt])
     
     plot(results,enemylist,trials)
-        
 
