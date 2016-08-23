@@ -26,7 +26,9 @@ Things implemented:
 
 Things not implemented:
 * Aiming/aiming bonuses
-* Reasonable, complex strategies
+* Called shots
+* Shotgun range damage bonuses/penalties
+* Complex combat strategies
 * Inventory items
 * Healing
 * Cover

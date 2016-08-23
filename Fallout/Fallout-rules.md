@@ -84,14 +84,15 @@ Guns, Big Guns, or Explosives skill.
 
 Thrown weapons always use Explosives skill, even if the projectile
 thrown is not, in fact, explosive.  Laying a mine uses Explosives skill,
-modified by the weight of the creature stepping on it.  Flying creatures
-do not set off mines, and a radroach is much less likely to than is a
-Super Mutant.  Fortunately, this usually works out for the players,
-since deadlier opponents also tend to be bigger ones.
+which is rolled when a creature might trigger it (modified by the weight
+of the creature stepping on it).  Flying creatures do not set off mines,
+and a radroach is much less likely to than is a Super Mutant.
+Fortunately, this usually works out for the players, since deadlier
+opponents also tend to be bigger ones.
 
-### Combat Turns
+### Combat Rounds
 
-Each combat turn has two phases: movement and action.  Combat proceeds
+Each combat round has two phases: movement and action.  Combat proceeds
 in decreasing order of agility score.  Tiebreakers are up to the GM.
 
 Movement is taken before action.  An action can be one of:
@@ -102,7 +103,7 @@ Movement is taken before action.  An action can be one of:
 
 Switching weapons does not use an action.
 
-Aiming takes a whole turn, not just a movement action.
+Aiming takes a whole round, not just a movement action.
 
 #### Movement
 
@@ -257,10 +258,15 @@ after any armor modifiers.
 
 Roll `1d8` to determine the direction in which you missed, `1` being
 long, proceeding clockwise around to `5` being short, and so on.  The
-amount by which you missed determines how much you missed by, although
-there is no set formula for modifying distance by range.  The GM will
-decide whether you might have caught the target (or someone else) in the
-splash damage, or hit something that wasn't your intended target.
+amount by which you missed determines how much you missed by.  If the
+shot is short of the target (`4`, `5`, or `6`), take the percentage by
+which you missed, and multiply it by the distance that is the lower
+boundary for the range increment in which your target is.  Use 
+that as the point the projectile hit, and calculate splash damage from
+there.  Shots that go long go to the maximum range possible for the
+projectile unless they hit something on the way.
+
+Or just wing it, if that seems needlessly complicated.
 
 ### Armor
 
@@ -365,6 +371,11 @@ smaller dice worth of damage.
 * Flamer: `4d4` burn
 * Missile: `5d6`/splash (`2m`) (`10m`/`30m`/`50m`/`200m`)
 * Fat Man: `6d20` + `4d12` rad/splash(`5m`) (`15m`/`50m`/`100m`/`500m`)
+
+### Combat Simulator
+
+Some Python to simulate combat (using a subset of these rules) is
+[here](https://github.com/athornton/rpgexperiments/tree/master/Fallout/FalloutBattle).
 
 ## Healing
 
