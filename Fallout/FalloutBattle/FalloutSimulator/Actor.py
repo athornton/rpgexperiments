@@ -16,6 +16,8 @@ from .ActorException import ActorException
 import math
 
 class Actor(WorldObject):
+    phase_move="move"
+    phase_act="act"
     action_flee="flee"
     action_approach="approach"
     action_retreat="retreat"
@@ -38,6 +40,7 @@ class Actor(WorldObject):
         self._last_current_hp = current_hp
         self.apply_hp_constraints()
         self._action = None
+        self._move = None
         self._target = None
         self._weapon = None
         if special == None:
@@ -140,6 +143,9 @@ class Actor(WorldObject):
     def get_action(self):
         return self._action
 
+    def get_move(self):
+        return self._move
+    
     def get_target(self):
         return self._target
 
@@ -200,6 +206,9 @@ class Actor(WorldObject):
         self.check_coordinate_constraints()
 
     def check_coordinate_constraints(self):
+        if not self.arena:
+            self.log_debug("%s no longer in arena." % self.name)
+            return
         max_x = self.arena.max_x
         max_y = self.arena.max_y
         c = self.coordinates
@@ -220,16 +229,19 @@ class Actor(WorldObject):
                     c.y = max_y
                 self.log_debug("Adjusted %s position to %s." % (self.name,c))
 
-    def determine_action_with_target(self):
+    def determine_action_with_target(self,phase):
         st = self.strategy.strategy
         if st == Strategy.flee:
+            self._move = Actor.action_flee
             self._action = Actor.action_flee
             return
         if st == Strategy.nothing:
+            self._move = Actor.action_nothing
             self._action = Actor.action_nothing
             return
         t = self._target
         if t == None:
+            self.move = Actor.action_nothing
             self.action = Actor.action_nothing
             return
         rng = self.coordinates.distance(t.coordinates)
@@ -241,15 +253,21 @@ class Actor(WorldObject):
         #  flee in select_weapon
         st = self.strategy.strategy
         if st == Strategy.flee:
+            self._move = Actor.action_flee
             self._action = Actor.action_flee
             return
         if not self._weapon:
+            # We couldn't pick a weapon because we're not in melee range.
+            self._move = Actor.action_approach
             self._action = Actor.action_approach
             return
         # Try to close if we're at extreme range
         if self._weapon.w_range and rng > self._weapon.w_range.r_long:
+            self._move = Actor.action_approach
             self._action = Actor.action_approach
             return
+        # We should attack, if it's the action phase
+        self._move = Actor.action_nothing
         self._action=Actor.action_attack
                             
     def attack(self,actor):
@@ -271,13 +289,20 @@ class Actor(WorldObject):
                     logger=self.logger,quiet=self.quiet).rolled
         ths = "needed <= %d; rolled %d" % (hitchance,tohit)
         if tohit <= hitchance:
-            w.damage.roll()
-            self.apply_damage(w.damage,actor)
+            dmgcopy=w.damage.copy()
+            if w.weapontype == Weapon.melee:
+                strmod=self._get_strength_damage_mod()
+                dmgcopy.physical.mod = dmgcopy.physical.mod + strmod
+            dmgcopy.roll()
+            self.apply_damage(dmgcopy,actor)
             self.log("Attack (%s) hit: %s -> %s",ths,w.damage,
-                     w.damage.get_total_damage())
+                     dmgcopy.get_total_damage())
         else:
             self.log("Attack (%s) missed.",ths)
 
+    def _get_strength_damage_mod(self):
+        return math.floor((self.special.s - 5) / 2 )
+            
     def select_target(self):
         # If I am fleeing, no target:
         sn=self.name
@@ -287,12 +312,18 @@ class Actor(WorldObject):
             self.log_debug("%s fleeing; unsetting target." % sn)
             return
         # If I already have a target, stick with it if it is still a threat:
+        savetarget=None
         if self._target:
             if self._target.arena == self.arena and \
                self._target.current_hp > 0:
-                self.log_debug("%s keeping current target %s." %
-                               (sn,self._target.name))
-                return
+                if self._target.strategy == Strategy.flee:
+                    self.log_debug("%s is fleeing; looking for threat" %
+                                   self._target.name)
+                    savetarget=self._target
+                else:
+                    self.log_debug("%s keeping current target %s." %
+                                   (sn,self._target.name))
+                    return
         # For right now, just pick closest unfriendly
         potentials = [ a for a in self.arena.contents if type(a) is Actor \
                        and a != self ]
@@ -315,14 +346,22 @@ class Actor(WorldObject):
             hostiles.append(p)
         if not hostiles:
             self.log("%s could not choose new target." % self.name)
-            self._target = None
-            return None
-        hns = [x.name for x in hostiles]
-        self.log_debug("%s hostiles: %s" % (sn,hns))
-        hostiles.sort(key=lambda h: h.coordinates.distance(self.coordinates))
-        hns = [x.name for x in hostiles]
-        self.log_debug("%s hostiles sorted by proximity: %s" % (sn,hns))
-        self._target = hostiles[0]
+            self._target = savetarget
+            if savetarget:
+                self.log_debug("Choosing fleeing target %s." % savetarget)
+            return self._target
+        threats = [ x for x in hostiles if x.strategy.strategy != \
+                    Strategy.flee ]
+        # Choose non-fleeing enemies if available
+        if not threats:
+            # But if not, pick closest to pursue
+            threats=hostiles
+        hns = [x.name for x in threats]
+        self.log_debug("%s threats: %s" % (sn,hns))
+        threats.sort(key=lambda h: h.coordinates.distance(self.coordinates))
+        hns = [x.name for x in threats]
+        self.log_debug("%s threats sorted by proximity: %s" % (sn,hns))
+        self._target = threats[0]
         self.log("%s chose new target %s." % (self.name,self._target.name))
             
     def select_weapon(self,a):
@@ -446,54 +485,53 @@ class Actor(WorldObject):
     def process_turn(self):
         sn=self.name
         self.log("Processing turn for %s." % sn)
-        self.check_coordinate_constraints()
-        self.remove_corpse()
-        if self.arena == None:
-            self.log("%s no longer in arena." % sn)
-            return
-        self.apply_effects()
-        self.remove_corpse()
-        if self.arena == None:
-            self.log("%s no longer in arena." % sn)
-            return
-        self.select_target()
-        self.determine_action_with_target()
-        todo = self._action
-        t = self._target
-        tn = "None"
-        if t:
-            tn=t.name
-        self.log("%s: target is %s; action is %s" % (sn,tn,todo))
-        if todo == Actor.action_flee:
-            self.strategy.strategy = Strategy.flee
-            self.flee()
-            return
-        elif todo == Actor.action_nothing:
-            return
-        if not t:
-            return
-        if todo == Actor.action_retreat:
-            self.move_away(t.coordinates)
-        elif todo == Actor.action_approach:
-            self.move_towards(t.coordinates)           
-        elif todo == Actor.action_attack:
-            if t.arena == self.arena:
-                self.attack(t)
-            # If the target has fled or died, it's a no-op.
-        else:
-            raise ActorException("Invalid action '%s'" % todo)
-        
+        for phase in [ Actor.phase_move, Actor.phase_act ]:
+            self.log("%s turn phase %s:" % (sn,phase))
+            self.check_coordinate_constraints()
+            self.remove_corpse()
+            if self.arena == None:
+                self.log("%s no longer in arena." % sn)
+                return
+            self.apply_effects()
+            self.remove_corpse()
+            if self.arena == None:
+                self.log("%s no longer in arena." % sn)
+                return
+            self.select_target()
+            self.determine_action_with_target(phase)
+            todo = self._action
+            if phase == Actor.phase_move:
+                todo = self._move
+            t = self._target
+            tn = "None"
+            if t:
+                tn=t.name
+            self.log("%s: phase %s; target is %s; action is %s" %
+                     (sn,phase,tn,todo))
+            if todo == Actor.action_flee:
+                self.strategy.strategy = Strategy.flee
+                self.flee()
+                continue
+            elif todo == Actor.action_nothing:
+                continue
+            if not t:
+                continue
+            if todo == Actor.action_retreat:
+                self.move_away(t.coordinates)
+            elif todo == Actor.action_approach:
+                self.move_towards(t.coordinates)           
+            elif todo == Actor.action_attack:
+                if t.arena == self.arena:
+                    self.attack(t)
+                    # If the target has fled or died, it's a no-op.
+            else:
+                raise ActorException("Invalid action '%s'" % todo)
+        self.log("Turn done for %s." % sn)
+                                              
     def apply_damage(self,damage,target):
         ti=target.current_hp
         d=damage.copy()
         tt = 0
-        if d.radiation:
-            d.radiation.roll(armor=target.armor)
-            t=d.radiation.total
-            if t > 0:
-                tt += t
-                target.max_hp_with_rads -= t
-                target.apply_hp_constraints()
         if d.physical:
             d.physical.roll(armor=target.armor)
             t = d.physical.total
@@ -535,6 +573,13 @@ class Actor(WorldObject):
                                                      verbose=self.verbose,
                                                      logger=self.logger,
                                                      quiet=self.quiet))
+        if d.radiation:
+            d.radiation.roll(armor=target.armor)
+            t=d.radiation.total
+            if t > 0:
+                tt += t
+                target.max_hp_with_rads -= t
+                target.apply_hp_constraints()
         if tt > 0:
             dhp = ti - target.current_hp
             my_factions = [ x.name for x in self.factions ]

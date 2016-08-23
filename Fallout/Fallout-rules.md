@@ -89,6 +89,35 @@ do not set off mines, and a radroach is much less likely to than is a
 Super Mutant.  Fortunately, this usually works out for the players,
 since deadlier opponents also tend to be bigger ones.
 
+### Combat Turns
+
+Each combat turn has two phases: movement and action.  Combat proceeds
+in decreasing order of agility score.  Tiebreakers are up to the GM.
+
+Movement is taken before action.  An action can be one of:
+
+* Movement (so a double-move in lieu of an attack is acceptable)
+* Attack
+* Using an inventory item
+
+Switching weapons does not use an action.
+
+Aiming takes a whole turn, not just a movement action.
+
+#### Movement
+
+Movement is a function of agility: you can move `3 + (2/3 * A)` meters
+per combat turn phase, rounding up.
+
+    Agility      Max Move(m)
+    1            4
+    2-3          5
+    4            6
+    5-6          7
+    8-9          9
+    10           10          
+
+
 #### Attacks
 
 Start with the appropriate percentile skill.

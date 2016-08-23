@@ -3,6 +3,30 @@
 import FalloutSimulator
 import logging
 import pickle
+import argparse
+
+def _parse_my_args():
+    parser = argparse.ArgumentParser(description=
+                                     'Run multiple trials of battle')
+    parser.add_argument("-t","--trials",type=int,default=300,
+                        help="# of trials to run [300]")
+    parser.add_argument("-d","--debug",action='store_true',
+                        help="enable debug logging")
+    parser.add_argument("-v","--verbose",action='store_true',
+                        help="verbose object descriptions")
+    parser.add_argument("-q","--quiet",default=True,
+                        action='store_true',help="suppress battle logs")
+    parser.add_argument("-c","--catalog",default="./catalog.pck",
+                        help="pickle file containing object catalog")
+    parser.add_argument("-o","--output",help="Text output file [stdout]")
+    parser.add_argument("-g","--graphicaloutput",help="Plot output file" +
+                        "[None]")
+    parser.add_argument("-n","--noplot",default=False,action='store_true',
+                        help="Omit graphical output to screen")
+    parser.add_argument("-s","--silent",action='store_true',default=False,
+                        help="Omit all text output")
+    args = parser.parse_args()
+    return args
 
 def clone_and_swap_ammo(weapon,newammo):
     w=weapon.copy()
@@ -39,7 +63,9 @@ def load_catalog(filename=None,debug=False,quiet=False,verbose=False,
                     dx.logger=logger
     return catalog
 
-def plot(results,enemylist,trials):
+def plot(results,enemylist,trials,outputfile,noplot):
+    if not outputfile and noplot:
+        return
     import numpy as np
     import matplotlib.pyplot as plt
 
@@ -104,27 +130,36 @@ def plot(results,enemylist,trials):
                              edgecolor="none"))
         plt.ylabel('HP remaining (Mirelurk shown as negative)')
             
-        plt.title("Survival of %s" % mname)
+        plt.title("Survival of %s" % mn)
         plt.legend(p,enemylist,loc=2)
-        plt.savefig("GutsiesVsMirelurk.pdf",format="pdf")
-        plt.show()
+        if outputfile:
+            plt.savefig(outputfile,format="pdf")
+        if not noplot:
+            plt.show()
 
-if __name__=="__main__":
-    debug=False
-    quiet=True
-    verbose=False
+def main():
+    args = _parse_my_args()
+    debug=args.debug
+    quiet=args.quiet
+    silent=args.silent
+    verbose=args.verbose
     lgr=logging.getLogger(name="Multibattle")
     lgr.setLevel(logging.DEBUG)
     ch=logging.StreamHandler()
     ch.setLevel(logging.DEBUG)
     lgr.addHandler(ch)
-
-    trials=300
-
+    if args.output:
+        fh=logging.FileHandler(args.output)
+        fh.setLevel(logging.DEBUG)
+        lgr.addHandler(fh)
+    trials=args.trials
+    cfile=args.catalog
     
-    catalog=load_catalog(filename="catalog.pck",debug=debug,quiet=quiet,
+    catalog=load_catalog(filename=cfile,debug=debug,quiet=quiet,
                          verbose=verbose,logger=lgr)
-
+    noplot=args.noplot
+    gfile=args.graphicaloutput
+    
     results=dict()
     mname="Sgt. Gutsies vs. Mirelurk Killclaw"
     results[mname]=dict()
@@ -208,8 +243,8 @@ if __name__=="__main__":
     avg_turns=(total_turns + 0.0) / trials
     results[mname]["avg_turns"]=avg_turns
 
-    print("%s: results of %d trials:" % (mname, trials))
-    print(" Average battle length: %.02f turns." % results[mname]["avg_turns"])
+    s1 = "%s: results of %d trials:" % (mname, trials)
+    s2 = " Average battle length: %.02f turns." % results[mname]["avg_turns"]
     rmb=results[mname]["by_victor"]
     q=dict()
     for v in rmb:
@@ -221,10 +256,24 @@ if __name__=="__main__":
         while count in q:
             count=count+0.01
         q[count] = s
+    rr = []
     ll=list(q.keys())
     ls=reversed(sorted(ll))
     for tt in ls:
-        print(" " + q[tt])
-    
-    plot(results,enemylist,trials)
+        rr.append(" " + q[tt])
+    lfn=lgr.info
+    if quiet and silent:
+        pass
+    else:
+        if quiet:
+            lfn=print
+        lfn(s1)
+        lfn(s2)
+        for rrr in rr:
+            lfn(rrr)
+                
+    plot(results,enemylist,trials,gfile,noplot)
+       
+if __name__=="__main__":
+    main()
 

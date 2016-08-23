@@ -46,12 +46,22 @@ class Skills(FalloutObject):
         return s
 
     def copy(self):
-        s = Skills(name=self.name,melee=self.melee,small_guns=self.small_guns,
-                   big_guns=self.big_guns,explosives=self.explosives,
-                   repair=self.repair,lockpick=self.lockpick,
-                   science=self.science,medic=self.medic,sneak=self.sneak,
-                   observe=self.observe,debug=self.debug,verbose=self.verbose,
-                   quiet=self.quiet,logger=self.logger)
+        s = Skills()
+        s.name=self.name
+        s.melee=self.melee
+        s.small_guns=self.small_guns
+        s.big_guns=self.big_guns
+        s.explosives=self.explosives
+        s.repair=self.repair
+        s.lockpick=self.lockpick
+        s.science=self.science
+        s.medic=self.medic
+        s.sneak=self.sneak
+        s.observe=self.observe
+        s.debug=self.debug
+        s.verbose=self.verbose
+        s.quiet=self.quiet,
+        s.logger=self.logger
         return s
     
     def recalc(self,sp):
