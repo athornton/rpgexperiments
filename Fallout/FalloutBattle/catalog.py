@@ -286,10 +286,20 @@ def build_catalog(args):
     actor["feral ghoul"].weapons = [ weapon["ghoul punch"].copy() ]
     actor["feral ghoul"].morale = 8
 
+    actor["stingwing"]=actor["s3"].copy()
+    actor["stingwing"].weapons = [ weapon["stingwing sting"].copy(),
+                                   weapon["stingwing venom"].copy() ]
+    actor["stingwing"].morale = 7
+    actor["stingwing"].special.a = 8
+    actor["stingwing"].recalc_skills()
+    
     actor["mole rat"]=actor["s4"].copy()
     actor["mole rat"].weapons = [ weapon["mole rat bite"].copy() ]
     actor["mole rat"].morale = 5
-
+    actor["mole rat brood mother"]=actor["mole rat"].copy()
+    actor["mole rat brood mother"].hp=80
+    actor["mole rat brood mother"].morale = 10
+    
     actor["super mutant (melee)"]=actor["s5"].copy()
     actor["super mutant (melee)"].weapons = [ weapon["nail board"].copy() ]
     actor["super mutant (melee)"].armor = armor["light"].copy()
@@ -323,6 +333,10 @@ def build_catalog(args):
     actor["raider boomer"].morale = 9
     actor["raider boomer"].armor = armor["medium"].copy()
 
+    actor["glowing one"]=actor["s6"].copy()
+    actor["glowing one"].weapons = [ weapon["glowing one claw"].copy() ]
+    actor["glowing one"].morale = 10
+    
     actor["Sgt. Gutsy"]=actor["s7"].copy()
     actor["Sgt. Gutsy"].weapons = [ weapon["Mr. Handy buzzsaw"].copy(),
                                     weapon["laser rifle"].copy(),

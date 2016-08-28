@@ -116,8 +116,8 @@ def plot(results,enemylist,trials,outputfile,noplot):
             ss.append(sl)
         w=1
         p=[]
-        colors=["Red", "DarkRed", "Gold", "Salmon", "Green" ]
-        for i in range(0,5):
+        colors=["Red", "DarkRed", "Salmon", "Blue", "Gold", "Green" ]
+        for i in range(0,6):
             if i == 0 or i == (len(colors) - 1):
                 b=[0]*trials
             else:
@@ -162,13 +162,13 @@ def main():
     gfile=args.graphicaloutput
     
     results=dict()
-    mname="Mutants (melee x 2, ranged, overlord) vs. Deathclaw"
+    mname="Mutants (melee x 2, ranged x 2, overlord) vs. Deathclaw"
     results[mname]=dict()
     results[mname]["by_victor"]=dict()
 
-    enemylist=[ "Super Mutant Overlord", "Super Mutant (Ranged)",
-                "Super Mutant (Melee) #1","Super Mutant (Melee) #2",
-                "Deathclaw" ]
+    enemylist=[ "Super Mutant Overlord", "Super Mutant (Ranged) #1",
+                "Super Mutant (Ranged) #2", "Super Mutant (Melee) #1",
+                "Super Mutant (Melee) #2", "Deathclaw" ]
 
     
     m1=catalog["creature"]["super mutant overlord"].copy()
@@ -179,24 +179,29 @@ def main():
     m2.morale=9
     m2.recalc_skills()
     m2.name=enemylist[1]
-    m3=catalog["creature"]["super mutant (melee)"].copy()
-    m3.morale=9    
-    m3.recalc_skills()    
+    m3=catalog["creature"]["super mutant (ranged)"].copy()
+    m3.morale=9
+    m3.recalc_skills()
     m3.name=enemylist[2]
     m4=catalog["creature"]["super mutant (melee)"].copy()
     m4.morale=9    
     m4.recalc_skills()    
     m4.name=enemylist[3]
+    m5=catalog["creature"]["super mutant (melee)"].copy()
+    m5.morale=9    
+    m5.recalc_skills()    
+    m5.name=enemylist[4]
     
     mf=FalloutSimulator.Faction.Faction(name="mutants")
     m1.factions = [ mf ]
     m2.factions = [ mf ]
     m3.factions = [ mf ]
     m4.factions = [ mf ]
+    m5.factions = [ mf ]
 
     d1=catalog["creature"]["deathclaw"].copy()
     d1.recalc_skills()
-    d1.name=enemylist[4]
+    d1.name=enemylist[5]
     df=FalloutSimulator.Faction.Faction(name="deathclaw")
     d1.factions=[df]
     
@@ -207,6 +212,8 @@ def main():
     m3.coordinates.y=11
     m4.coordinates.x=11
     m4.coordinates.y=9
+    m5.coordinates.x=11
+    m5.coordinates.y=11
     
     d1.coordinates.x=40
     d1.coordinates.y=40    
@@ -226,6 +233,7 @@ def main():
         b.add_actor_at_coords(m2.copy(),m2.coordinates.copy())
         b.add_actor_at_coords(m3.copy(),m3.coordinates.copy())
         b.add_actor_at_coords(m4.copy(),m4.coordinates.copy())
+        b.add_actor_at_coords(m4.copy(),m5.coordinates.copy())
         b.add_actor_at_coords(d1.copy(),d1.coordinates.copy())
 
         b.fight()

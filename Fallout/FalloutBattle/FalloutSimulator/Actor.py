@@ -696,7 +696,7 @@ class Actor(WorldObject):
             if effecttype == Effect.burn:
                 self.current_hp -= e.effect.total
             elif effecttype == Effect.poison:
-                if not self.saving_throw("e",Effect.poisonsavemod):
+                if not self.saving_throw("e",e.poisonsavemod):
                     self.current_hp -= e.effect.total
             elif effecttype == Effect.heal:
                 self.current_hp += e.effect.total
